@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#F8F6F1</color>
+    <color name="primaryGreen">#2E7D32</color>
+    <color name="darkText">#333333</color>
+    <style name="TombolBulatSempurna" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>
