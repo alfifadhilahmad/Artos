@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.database.Cursor;
@@ -15,6 +15,8 @@ import android.graphics.Color;
 
 import android.animation.ObjectAnimator;
 import android.view.animation.DecelerateInterpolator;
+
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,34 +27,9 @@ public class HomeActivity extends AppCompatActivity {
 
         updateDashboardData();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        setupCustomBottomNavigation();
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_home) {
-                return true;
-            } else if (itemId == R.id.nav_pengeluaran) {
-                startActivity(new Intent(getApplicationContext(), PengeluaranActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_budget) {
-                startActivity(new Intent(getApplicationContext(), BudgetActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_riwayat) {
-                startActivity(new Intent(getApplicationContext(), RiwayatActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            }
-            return false;
-        });
-
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
+        View fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class));
         });
@@ -62,6 +39,27 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateDashboardData();
+    }
+
+    private void setupCustomBottomNavigation() {
+        findViewById(R.id.navHomeButton).setOnClickListener(v -> {
+            // Already on Home.
+        });
+
+        findViewById(R.id.navPengeluaranButton).setOnClickListener(v ->
+                openBottomNavActivity(PengeluaranActivity.class));
+
+        findViewById(R.id.navBudgetButton).setOnClickListener(v ->
+                openBottomNavActivity(BudgetActivity.class));
+
+        findViewById(R.id.navRiwayatButton).setOnClickListener(v ->
+                openBottomNavActivity(RiwayatActivity.class));
+    }
+
+    private void openBottomNavActivity(Class<?> destinationActivity) {
+        startActivity(new Intent(getApplicationContext(), destinationActivity));
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     private void updateDashboardData() {
@@ -91,29 +89,7 @@ public class HomeActivity extends AppCompatActivity {
         tvPemasukan.setText("Rp " + String.format("%,.0f", totalPemasukan));
         tvPengeluaran.setText("Rp " + String.format("%,.0f", totalPengeluaran));
 
-        // --- BAGIAN 2: TRANSAKSI TERAKHIR ---
-        TextView tvTransaksi1 = findViewById(R.id.tvTransaksi1);
-        TextView tvTransaksi2 = findViewById(R.id.tvTransaksi2);
-        TextView tvTransaksi3 = findViewById(R.id.tvTransaksi3);
-
-        tvTransaksi1.setText("-");
-        tvTransaksi2.setText("-");
-        tvTransaksi3.setText("-");
-
-        Cursor cursor = dbHelper.getLastTransactions();
-        TextView[] listTv = {tvTransaksi1, tvTransaksi2, tvTransaksi3};
-        int i = 0;
-
-        while(cursor.moveToNext() && i < 3){
-            String type = cursor.getString(1);
-            double amount = cursor.getDouble(2);
-            String note = cursor.getString(4);
-
-            String simbol = type.equals("Pengeluaran") ? "- Rp " : "+ Rp ";
-            listTv[i].setText(note + "   " + simbol + String.format("%,.0f", amount));
-            i++;
-        }
-        cursor.close();
+        updateRecentTransactions(dbHelper);
 
         // --- BAGIAN 3: ANALISIS KEUANGAN BULAN INI (BUDGET) ---
         TextView tvBudgetBulanan = findViewById(R.id.tvBudgetBulanan);
@@ -136,9 +112,11 @@ public class HomeActivity extends AppCompatActivity {
             persenTerpakai = 100;
         }
 
-        tvBudgetBulanan.setText("Rp " + String.format("%,.0f", targetBudget));
-        tvTerpakai.setText("Terpakai: Rp " + String.format("%,.0f", totalPengeluaran));
+        tvBudgetBulanan.setText("Budget");
+        tvTerpakai.setText("- " + formatRupiah(totalPengeluaran));
+        tvTerpakai.setTextColor(Color.parseColor("#B3261E"));
         tvPersenBudget.setText(persenTerpakai + "% digunakan");
+        tvPersenBudget.setVisibility(View.GONE);
 
         ObjectAnimator animation = ObjectAnimator.ofInt(pbBudget, "progress", 0, persenTerpakai);
         animation.setDuration(1200);
@@ -146,13 +124,177 @@ public class HomeActivity extends AppCompatActivity {
         animation.start();
 
         if (sisaBudget < 0) {
-            tvSisaBudget.setText("Overbudget: Rp " + String.format("%,.0f", Math.abs(sisaBudget)));
-            tvSisaBudget.setTextColor(Color.RED);
+            tvSisaBudget.setText("Sisa " + formatRupiah(sisaBudget));
+            tvSisaBudget.setTextColor(Color.parseColor("#B3261E"));
             pbBudget.setProgressTintList(android.content.res.ColorStateList.valueOf(Color.RED));
         } else {
-            tvSisaBudget.setText("Sisa: Rp " + String.format("%,.0f", sisaBudget));
+            tvSisaBudget.setText("Sisa " + formatRupiah(sisaBudget));
             tvSisaBudget.setTextColor(Color.parseColor("#666666"));
-            pbBudget.setProgressTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+            pbBudget.setProgressTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FFA43C")));
         }
+        pbBudget.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#D9D9D9")));
+    }
+
+    private String formatRupiah(double amount) {
+        String formattedAmount = String.format(Locale.US, "%,.0f", Math.abs(amount)).replace(",", ".");
+        String prefix = amount < 0 ? "- Rp " : "Rp ";
+        return prefix + formattedAmount;
+    }
+
+    private void updateRecentTransactions(DatabaseHelper dbHelper) {
+        View[] rows = {
+                findViewById(R.id.rowTransaksi1),
+                findViewById(R.id.rowTransaksi2),
+                findViewById(R.id.rowTransaksi3)
+        };
+
+        ImageView[] icons = {
+                findViewById(R.id.ivTransaksiIcon1),
+                findViewById(R.id.ivTransaksiIcon2),
+                findViewById(R.id.ivTransaksiIcon3)
+        };
+
+        TextView[] titles = {
+                findViewById(R.id.tvTransaksi1),
+                findViewById(R.id.tvTransaksi2),
+                findViewById(R.id.tvTransaksi3)
+        };
+
+        TextView[] categories = {
+                findViewById(R.id.tvTransaksiKategori1),
+                findViewById(R.id.tvTransaksiKategori2),
+                findViewById(R.id.tvTransaksiKategori3)
+        };
+
+        TextView[] amounts = {
+                findViewById(R.id.tvTransaksiAmount1),
+                findViewById(R.id.tvTransaksiAmount2),
+                findViewById(R.id.tvTransaksiAmount3)
+        };
+
+        View[] dividers = {
+                findViewById(R.id.dividerTransaksi1),
+                findViewById(R.id.dividerTransaksi2)
+        };
+
+        TextView emptyText = findViewById(R.id.tvTransaksiEmpty);
+
+        for (View row : rows) {
+            row.setVisibility(View.GONE);
+        }
+        for (View divider : dividers) {
+            divider.setVisibility(View.GONE);
+        }
+        emptyText.setVisibility(View.VISIBLE);
+
+        Cursor cursor = dbHelper.getLastTransactions();
+        int index = 0;
+
+        while (cursor.moveToNext() && index < rows.length) {
+            String type = getCursorString(cursor, 1);
+            double amount = cursor.getDouble(2);
+            String category = getCursorString(cursor, 3);
+            String note = getCursorString(cursor, 4);
+
+            rows[index].setVisibility(View.VISIBLE);
+            icons[index].setImageResource(getTransactionIconRes(category, type));
+            titles[index].setText(getTransactionTitle(note, category));
+            categories[index].setText(getTransactionSubtitle(category, type));
+            amounts[index].setText(formatTransactionAmount(type, amount));
+            amounts[index].setTextColor(getTransactionAmountColor(type));
+
+            index++;
+        }
+
+        cursor.close();
+
+        emptyText.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
+        if (index > 1) {
+            dividers[0].setVisibility(View.VISIBLE);
+        }
+        if (index > 2) {
+            dividers[1].setVisibility(View.VISIBLE);
+        }
+    }
+
+    private String getCursorString(Cursor cursor, int columnIndex) {
+        if (cursor.isNull(columnIndex)) {
+            return "";
+        }
+        return cursor.getString(columnIndex).trim();
+    }
+
+    private String getTransactionTitle(String note, String category) {
+        if (!note.isEmpty()) {
+            return note;
+        }
+        if (!category.isEmpty()) {
+            return category;
+        }
+        return "Transaksi";
+    }
+
+    private String getTransactionSubtitle(String category, String type) {
+        if (!category.isEmpty()) {
+            return category;
+        }
+        if (!type.isEmpty()) {
+            return type;
+        }
+        return "Transaksi";
+    }
+
+    private String formatTransactionAmount(String type, double amount) {
+        String formattedAmount = String.format(Locale.US, "%,.0f", amount).replace(",", ".");
+
+        if ("Pemasukan".equalsIgnoreCase(type)) {
+            return "+ Rp " + formattedAmount;
+        } else if ("Pengeluaran".equalsIgnoreCase(type)) {
+            return "- Rp " + formattedAmount;
+        }
+
+        return "Rp " + formattedAmount;
+    }
+
+    private int getTransactionAmountColor(String type) {
+        if ("Pemasukan".equalsIgnoreCase(type)) {
+            return Color.parseColor("#306D29");
+        } else if ("Pengeluaran".equalsIgnoreCase(type)) {
+            return Color.parseColor("#B3261E");
+        }
+
+        return Color.parseColor("#262A24");
+    }
+
+    private int getTransactionIconRes(String category, String type) {
+        if ("Pemasukan".equalsIgnoreCase(type)) {
+            return R.drawable.ic_category_income_active;
+        }
+
+        String normalizedCategory = category.toLowerCase(Locale.ROOT);
+
+        if (normalizedCategory.contains("makan") || normalizedCategory.contains("food")) {
+            return R.drawable.ic_category_food_active;
+        } else if (normalizedCategory.contains("edukasi") || normalizedCategory.contains("pendidikan")) {
+            return R.drawable.ic_category_education_active;
+        } else if (normalizedCategory.contains("tagihan") || normalizedCategory.contains("bill")) {
+            return R.drawable.ic_category_bill_active;
+        } else if (normalizedCategory.contains("hiburan")) {
+            return R.drawable.ic_category_entertainment_active;
+        } else if (normalizedCategory.contains("kesehatan")) {
+            return R.drawable.ic_category_health_active;
+        } else if (normalizedCategory.contains("rumah")) {
+            return R.drawable.ic_category_house_active;
+        } else if (normalizedCategory.contains("tabungan")) {
+            return R.drawable.ic_category_savings_active;
+        } else if (normalizedCategory.contains("belanja")) {
+            return R.drawable.ic_category_shopping_active;
+        } else if (normalizedCategory.contains("snack")) {
+            return R.drawable.ic_category_snack_active;
+        } else if ("Pengeluaran".equalsIgnoreCase(type)) {
+            return R.drawable.ic_expenditure_active;
+        }
+
+        return R.drawable.ic_category_bill_active;
     }
 }

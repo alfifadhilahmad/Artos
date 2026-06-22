@@ -4,13 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:background="@color/home_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:fitsSystemWindows="true">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="100dp"
+        android:paddingBottom="132dp"
         android:clipToPadding="false">
 
         <LinearLayout
@@ -20,73 +22,135 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="10dp"
-            android:paddingTop="2dp">
+            android:paddingTop="18dp">
 
             <TextView
                 android:id="@+id/tvNamaUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="👋 Hai, User!"
-                android:textSize="28sp"
+                android:fontFamily="@font/plus_jakarta_sans_bold"
+                android:textColor="@color/home_text_primary"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="186dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/card_saldo"
+                android:background="@drawable/home_balance_card_bg"
                 android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total Duit"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvSaldo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Rp 0"
-                    android:textColor="#FFFFFF"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="70dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/card_mini"
-                        android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/baseline_arrow_upward_24"
-                            app:tint="#FFFFFF"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pemasukan"
-                            android:textColor="#FFFFFF" />
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:text="Total Saldo"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/tvPemasukan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rp 0"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold" />
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/plus_jakarta_sans_semibold"
+                            android:letterSpacing="0.08"
+                            android:text="SISA KEUANGAN POSITIF"
+                            android:textColor="#DDEEDB"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:background="@drawable/home_chip_bg"
+                        android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:gravity="center"
+                        android:minWidth="92dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:text="Juni 2026"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvSaldo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_bold"
+                    android:maxLines="1"
+                    android:text="Rp 0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/home_stat_card_bg"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="10dp">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_arrow_upward_24"
+                            app:tint="#FFFFFF"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/plus_jakarta_sans_medium"
+                                android:text="Pemasukan"
+                                android:textColor="#F1F8F0"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvPemasukan"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/roboto_bold"
+                                android:maxLines="1"
+                                android:text="Rp 0"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -96,182 +160,541 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="70dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/card_mini"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:background="@drawable/home_stat_card_bg"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="10dp">
 
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:src="@drawable/outline_arrow_downward_24"
                             app:tint="#FFFFFF"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pengeluaran"
-                            android:textColor="#FFFFFF" />
 
-                        <TextView
-                            android:id="@+id/tvPengeluaran"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Rp 0"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold" />
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/plus_jakarta_sans_medium"
+                                android:text="Pengeluaran"
+                                android:textColor="#F1F8F0"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvPengeluaran"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/roboto_bold"
+                                android:maxLines="1"
+                                android:text="Rp 0"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
                     </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:text="Transaksi Terakhir"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:text="MINGGU 15 JUNI 2026"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/home_chevron_circle_bg"
+                    android:fontFamily="@font/plus_jakarta_sans_bold"
+                    android:gravity="center"
+                    android:text="›"
+                    android:textColor="@color/home_primary_green"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/home_white_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvTransaksiEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans_regular"
+                    android:gravity="center"
+                    android:paddingTop="18dp"
+                    android:paddingBottom="18dp"
+                    android:text="Belum ada transaksi"
+                    android:textColor="#666666"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:id="@+id/rowTransaksi1"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivTransaksiIcon1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_expenditure_active" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvTransaksi1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_semibold"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvTransaksiKategori1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="#666666"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvTransaksiAmount1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="-"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/dividerTransaksi1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#1A262A24"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/rowTransaksi2"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivTransaksiIcon2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_expenditure_active" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvTransaksi2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_semibold"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvTransaksiKategori2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="#666666"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvTransaksiAmount2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="-"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/dividerTransaksi2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#1A262A24"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/rowTransaksi3"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivTransaksiIcon3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_expenditure_active" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvTransaksi3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_semibold"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvTransaksiKategori3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="#666666"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvTransaksiAmount3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="-"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Transaksi Terakhir"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/plus_jakarta_sans_semibold"
+                android:text="Keuangan Bulan Ini"
+                android:textColor="@color/home_text_primary"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/card_transaksi"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/home_white_card_bg"
+                android:elevation="2dp"
                 android:orientation="vertical"
                 android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvBudgetBulanan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans_semibold"
+                            android:text="Budget"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/tvSisaBudget"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:text="Sisa Rp 0"
+                            android:textColor="#666666"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tvTransaksi1"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tvTerpakai"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="16sp"
-                        android:padding="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvTransaksi2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="16sp"
-                        android:padding="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tvTransaksi3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="16sp"
-                        android:padding="8dp"/>
-
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="end"
+                        android:text="- Rp 0"
+                        android:textColor="#B3261E"
+                        android:textSize="12sp"/>
                 </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Keuangan Bulan Ini"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/card_budget"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Budget Bulanan"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tvBudgetBulanan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Rp 0"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
 
                 <ProgressBar
                     android:id="@+id/pbBudget"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="12dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="12dp"
                     android:max="100"
                     android:progress="0"
-                    android:progressTint="#4CAF50"/>
+                    android:progressDrawable="@drawable/home_progress_bar"
+                    android:progressTint="@color/home_progress_orange"/>
 
                 <TextView
                     android:id="@+id/tvPersenBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="0% digunakan"/>
-
-                <TextView
-                    android:id="@+id/tvTerpakai"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Terpakai: Rp 0"/>
-
-                <TextView
-                    android:id="@+id/tvSisaBudget"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sisa: Rp 0"/>
+                    android:fontFamily="@font/plus_jakarta_sans_semibold"
+                    android:text="0% digunakan"
+                    android:textColor="@color/home_text_primary"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+    <LinearLayout
+        android:id="@+id/customBottomNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74dp"
         android:layout_gravity="bottom"
-        app:backgroundTint="#FFFFFF"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="15dp"
-        app:fabCradleVerticalOffset="10dp">
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
+        <LinearLayout
+            android:id="@+id/navHomeButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    </com.google.android.material.bottomappbar.BottomAppBar>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_home_active" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="Beranda"
+                android:textColor="@color/home_primary_green"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navPengeluaranButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.15"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_expenditure_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:singleLine="true"
+                android:text="Pengeluaran"
+                android:textColor="@color/home_text_primary"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="74dp"
+            android:layout_height="1dp" />
+
+        <LinearLayout
+            android:id="@+id/navBudgetButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_budget_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:text="Budget"
+                android:textColor="@color/home_text_primary"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navRiwayatButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_history_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:text="Riwayat"
+                android:textColor="@color/home_text_primary"
+                android:textSize="9sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
         android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/outline_add_24"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="#4CAF50"
-        app:backgroundTint="#FDF5E6"
-        app:fabCustomSize="64dp"
-        app:maxImageSize="32dp"
-        app:shapeAppearanceOverlay="@style/TombolBulatSempurna" />
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_center_input_button"
+        android:clickable="true"
+        android:elevation="16dp"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:translationZ="16dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_input" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
