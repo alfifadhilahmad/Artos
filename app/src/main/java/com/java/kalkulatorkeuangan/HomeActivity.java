@@ -16,7 +16,10 @@ import android.graphics.Color;
 import android.animation.ObjectAnimator;
 import android.view.animation.DecelerateInterpolator;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
@@ -287,26 +290,23 @@ public class HomeActivity extends AppCompatActivity {
         }
         emptyText.setVisibility(View.VISIBLE);
 
-        Cursor cursor = dbHelper.getLastTransactions();
+        List<RecentTransactionItem> recentItems = getSortedRecentTransactionItems(dbHelper);
         int index = 0;
 
-        while (cursor.moveToNext() && index < rows.length) {
-            String type = getCursorString(cursor, 1);
-            double amount = cursor.getDouble(2);
-            String category = getCursorString(cursor, 3);
-            String note = getCursorString(cursor, 4);
+        for (RecentTransactionItem item : recentItems) {
+            if (index >= rows.length) {
+                break;
+            }
 
             rows[index].setVisibility(View.VISIBLE);
-            icons[index].setImageResource(getTransactionIconRes(category, type));
-            titles[index].setText(getTransactionTitle(note, category));
-            categories[index].setText(getTransactionSubtitle(category, type));
-            amounts[index].setText(formatTransactionAmount(type, amount));
-            amounts[index].setTextColor(getTransactionAmountColor(type));
+            icons[index].setImageResource(getTransactionIconRes(item.category, item.type));
+            titles[index].setText(getTransactionTitle(item.note, item.category));
+            categories[index].setText(getTransactionSubtitle(item.category, item.type));
+            amounts[index].setText(formatTransactionAmount(item.type, item.amount));
+            amounts[index].setTextColor(getTransactionAmountColor(item.type));
 
             index++;
         }
-
-        cursor.close();
 
         emptyText.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
         if (index > 1) {
@@ -315,6 +315,116 @@ public class HomeActivity extends AppCompatActivity {
         if (index > 2) {
             dividers[1].setVisibility(View.VISIBLE);
         }
+    }
+
+    private List<RecentTransactionItem> getSortedRecentTransactionItems(DatabaseHelper dbHelper) {
+        List<RecentTransactionItem> items = new ArrayList<>();
+        Cursor cursor = dbHelper.getAllTransactions();
+
+        try {
+            int idIndex = cursor.getColumnIndex("id");
+            int typeIndex = cursor.getColumnIndex("type");
+            int amountIndex = cursor.getColumnIndex("amount");
+            int categoryIndex = cursor.getColumnIndex("category");
+            int noteIndex = cursor.getColumnIndex("note");
+            int dateIndex = cursor.getColumnIndex("date");
+
+            if (idIndex == -1 || typeIndex == -1 || amountIndex == -1
+                    || categoryIndex == -1 || noteIndex == -1 || dateIndex == -1) {
+                return items;
+            }
+
+            while (cursor.moveToNext()) {
+                RecentTransactionItem item = new RecentTransactionItem();
+                item.id = cursor.getLong(idIndex);
+                item.type = getCursorString(cursor, typeIndex);
+                item.amount = cursor.isNull(amountIndex) ? 0 : cursor.getDouble(amountIndex);
+                item.category = getCursorString(cursor, categoryIndex);
+                item.note = getCursorString(cursor, noteIndex);
+                item.date = getCursorString(cursor, dateIndex);
+                parseRecentTransactionDate(item);
+                items.add(item);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        sortRecentTransactionItems(items);
+        return items;
+    }
+
+    private void parseRecentTransactionDate(RecentTransactionItem item) {
+        item.validDate = false;
+
+        if (item.date == null || item.date.trim().isEmpty()) {
+            return;
+        }
+
+        String[] parts = item.date.trim().split("/");
+        if (parts.length != 3) {
+            return;
+        }
+
+        try {
+            int day = Integer.parseInt(parts[0].trim());
+            int month = Integer.parseInt(parts[1].trim());
+            int year = Integer.parseInt(parts[2].trim());
+
+            if (day < 1 || month < 1 || month > 12 || year < 1) {
+                return;
+            }
+
+            Calendar parsedDate = Calendar.getInstance();
+            parsedDate.setLenient(false);
+            parsedDate.clear();
+            parsedDate.set(year, month - 1, day);
+            parsedDate.getTime();
+
+            item.day = day;
+            item.month = month;
+            item.year = year;
+            item.validDate = true;
+        } catch (IllegalArgumentException exception) {
+            item.validDate = false;
+        }
+    }
+
+    private void sortRecentTransactionItems(List<RecentTransactionItem> items) {
+        Collections.sort(items, (first, second) -> {
+            if (first.validDate != second.validDate) {
+                return first.validDate ? -1 : 1;
+            }
+
+            if (first.validDate) {
+                if (first.year != second.year) {
+                    return second.year - first.year;
+                }
+                if (first.month != second.month) {
+                    return second.month - first.month;
+                }
+                if (first.day != second.day) {
+                    return second.day - first.day;
+                }
+            }
+
+            if (first.id == second.id) {
+                return 0;
+            }
+            return first.id < second.id ? 1 : -1;
+        });
+    }
+
+    private static class RecentTransactionItem {
+        long id;
+        String type;
+        double amount;
+        String category;
+        String note;
+        String date;
+        int year;
+        int month;
+        int day;
+        boolean validDate;
     }
 
     private String getCursorString(Cursor cursor, int columnIndex) {
