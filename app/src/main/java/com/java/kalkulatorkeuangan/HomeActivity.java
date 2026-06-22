@@ -58,6 +58,9 @@ public class HomeActivity extends AppCompatActivity {
 
         findViewById(R.id.navRiwayatButton).setOnClickListener(v ->
                 openBottomNavActivity(RiwayatActivity.class));
+
+        findViewById(R.id.btnRecentToRiwayat).setOnClickListener(v ->
+                openBottomNavActivity(RiwayatActivity.class));
     }
 
     private void openBottomNavActivity(Class<?> destinationActivity) {
