@@ -41,6 +41,7 @@
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:hint="Cari transaksi..."
+                android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:padding="0dp"
                 android:singleLine="true"
@@ -266,6 +267,19 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvRiwayatEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="18dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:gravity="center"
+            android:text="Transaksi tidak ditemukan"
+            android:textColor="#8A8F83"
+            android:textSize="12sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar

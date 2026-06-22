@@ -2,6 +2,13 @@ package com.java.kalkulatorkeuangan;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +17,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.database.Cursor;
 
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,8 +27,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Locale;
 
 public class RiwayatActivity extends AppCompatActivity {
+    private final ArrayList<Transaction> allTransactions = new ArrayList<>();
+    private RecyclerView rvRiwayat;
+    private TextView tvRiwayatEmpty;
+    private String currentSearchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +42,15 @@ public class RiwayatActivity extends AppCompatActivity {
         // 1. Target ke layout riwayat
         setContentView(R.layout.activity_riwayat);
 
-        RecyclerView rvRiwayat =
+        rvRiwayat =
                 findViewById(R.id.rvRiwayat);
+        tvRiwayatEmpty =
+                findViewById(R.id.tvRiwayatEmpty);
+        EditText etSearchRiwayat =
+                findViewById(R.id.etSearchRiwayat);
 
         rvRiwayat.setLayoutManager(
                 new LinearLayoutManager(this));
-
-        ArrayList<Transaction> transactionList =
-                new ArrayList<>();
 
         DatabaseHelper dbHelper =
                 new DatabaseHelper(this);
@@ -69,7 +84,7 @@ public class RiwayatActivity extends AppCompatActivity {
             String date =
                     cursor.getString(5);
 
-            transactionList.add(
+            allTransactions.add(
                     new Transaction(
                             id,
                             type,
@@ -83,41 +98,41 @@ public class RiwayatActivity extends AppCompatActivity {
 
         cursor.close();
 
-        Collections.sort(transactionList, (firstTransaction, secondTransaction) -> {
-            ParsedTransactionDate firstDate =
-                    parseTransactionDate(firstTransaction.getDate());
-            ParsedTransactionDate secondDate =
-                    parseTransactionDate(secondTransaction.getDate());
+        applySearchAndRender();
 
-            if (firstDate.validDate != secondDate.validDate) {
-                return firstDate.validDate ? -1 : 1;
+        etSearchRiwayat.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
-            if (firstDate.validDate) {
-                if (firstDate.year != secondDate.year) {
-                    return Integer.compare(secondDate.year, firstDate.year);
-                }
-
-                if (firstDate.month != secondDate.month) {
-                    return Integer.compare(secondDate.month, firstDate.month);
-                }
-
-                if (firstDate.day != secondDate.day) {
-                    return Integer.compare(secondDate.day, firstDate.day);
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentSearchQuery = s == null ? "" : s.toString();
+                applySearchAndRender();
             }
 
-            return Integer.compare(secondTransaction.getId(), firstTransaction.getId());
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
+        etSearchRiwayat.setOnEditorActionListener((view, actionId, event) -> {
+            boolean isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
+                    || actionId == EditorInfo.IME_ACTION_DONE;
+            boolean isEnterKey = event != null
+                    && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                    && event.getAction() == KeyEvent.ACTION_UP;
 
-        TransactionAdapter adapter =
-                new TransactionAdapter(transactionList);
+            if (isSearchAction || isEnterKey) {
+                hideKeyboardAndClearFocus(etSearchRiwayat);
+                return true;
+            }
 
-        rvRiwayat.setAdapter(adapter);
+            return false;
+        });
 
         Toast.makeText(
                 this,
-                "List size: " + transactionList.size(),
+                "List size: " + allTransactions.size(),
                 Toast.LENGTH_LONG
         ).show();
 
@@ -166,6 +181,93 @@ public class RiwayatActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
             }
+        });
+    }
+
+    private void applySearchAndRender() {
+        ArrayList<Transaction> filteredTransactions =
+                filterTransactions(currentSearchQuery);
+
+        sortTransactions(filteredTransactions);
+
+        TransactionAdapter adapter =
+                new TransactionAdapter(filteredTransactions);
+
+        rvRiwayat.setAdapter(adapter);
+
+        if (filteredTransactions.isEmpty()) {
+            rvRiwayat.setVisibility(View.GONE);
+            tvRiwayatEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvRiwayatEmpty.setVisibility(View.GONE);
+            rvRiwayat.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideKeyboardAndClearFocus(View focusedView) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+        }
+
+        focusedView.clearFocus();
+    }
+
+    private ArrayList<Transaction> filterTransactions(String query) {
+        ArrayList<Transaction> filteredTransactions = new ArrayList<>();
+        String normalizedQuery = query == null
+                ? ""
+                : query.trim().toLowerCase(Locale.ROOT);
+
+        if (normalizedQuery.isEmpty()) {
+            filteredTransactions.addAll(allTransactions);
+            return filteredTransactions;
+        }
+
+        for (Transaction transaction : allTransactions) {
+            if (containsQuery(transaction.getNote(), normalizedQuery)
+                    || containsQuery(transaction.getCategory(), normalizedQuery)
+                    || containsQuery(transaction.getType(), normalizedQuery)) {
+                filteredTransactions.add(transaction);
+            }
+        }
+
+        return filteredTransactions;
+    }
+
+    private boolean containsQuery(String value, String query) {
+        return value != null
+                && value.toLowerCase(Locale.ROOT).contains(query);
+    }
+
+    private void sortTransactions(ArrayList<Transaction> transactions) {
+        Collections.sort(transactions, (firstTransaction, secondTransaction) -> {
+            ParsedTransactionDate firstDate =
+                    parseTransactionDate(firstTransaction.getDate());
+            ParsedTransactionDate secondDate =
+                    parseTransactionDate(secondTransaction.getDate());
+
+            if (firstDate.validDate != secondDate.validDate) {
+                return firstDate.validDate ? -1 : 1;
+            }
+
+            if (firstDate.validDate) {
+                if (firstDate.year != secondDate.year) {
+                    return Integer.compare(secondDate.year, firstDate.year);
+                }
+
+                if (firstDate.month != secondDate.month) {
+                    return Integer.compare(secondDate.month, firstDate.month);
+                }
+
+                if (firstDate.day != secondDate.day) {
+                    return Integer.compare(secondDate.day, firstDate.day);
+                }
+            }
+
+            return Integer.compare(secondTransaction.getId(), firstTransaction.getId());
         });
     }
 
