@@ -20,8 +20,10 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         EditText etCatatan = findViewById(R.id.etCatatan);
         TextView tvTanggal = findViewById(R.id.tvTanggal);
         RadioGroup radioGroup = findViewById(R.id.radioGroupTipe);
+        RadioButton radioPengeluaran = findViewById(R.id.radioPengeluaran);
+        RadioButton radioPemasukan = findViewById(R.id.radioPemasukan);
         Spinner spKategori = findViewById(R.id.spKategori);
-        Button btnSimpan = findViewById(R.id.btnSimpan);
+        View btnSimpan = findViewById(R.id.btnSimpan);
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
 
@@ -38,6 +40,17 @@ public class TambahTransaksiActivity extends AppCompatActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spKategori.setAdapter(adapter);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            radioPengeluaran.setTextColor(
+                    checkedId == R.id.radioPengeluaran
+                            ? android.graphics.Color.parseColor("#306D29")
+                            : android.graphics.Color.parseColor("#262A24"));
+            radioPemasukan.setTextColor(
+                    checkedId == R.id.radioPemasukan
+                            ? android.graphics.Color.parseColor("#306D29")
+                            : android.graphics.Color.parseColor("#262A24"));
+        });
 
         // =========================
         // 2. DATE PICKER
@@ -89,8 +102,7 @@ public class TambahTransaksiActivity extends AppCompatActivity {
                 return;
             }
 
-            RadioButton selectedRadio = findViewById(selectedId);
-            String tipe = selectedRadio.getText().toString().trim();
+            String tipe = selectedId == R.id.radioPemasukan ? "Pemasukan" : "Pengeluaran";
 
             String kategori = spKategori.getSelectedItem().toString();
 
