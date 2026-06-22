@@ -2,6 +2,7 @@ package com.java.kalkulatorkeuangan;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +15,7 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tambah_transaksi);
 
-        ImageView btnBatal = findViewById(R.id.btnBatal);
+        View btnBatal = findViewById(R.id.btnBatal);
         EditText etNominal = findViewById(R.id.etNominal);
         EditText etCatatan = findViewById(R.id.etCatatan);
         TextView tvTanggal = findViewById(R.id.tvTanggal);
