@@ -2,6 +2,7 @@ package com.java.kalkulatorkeuangan;
 
 public class Transaction {
 
+    private int id;
     private String type;
     private double amount;
     private String category;
@@ -9,15 +10,24 @@ public class Transaction {
     private String date;
 
     public Transaction(String type, double amount, String note, String date) {
-        this(type, amount, "", note, date);
+        this(0, type, amount, "", note, date);
     }
 
     public Transaction(String type, double amount, String category, String note, String date) {
+        this(0, type, amount, category, note, date);
+    }
+
+    public Transaction(int id, String type, double amount, String category, String note, String date) {
+        this.id = id;
         this.type = type;
         this.amount = amount;
         this.category = category;
         this.note = note;
         this.date = date;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getType() {

@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 
 public class RiwayatActivity extends AppCompatActivity {
 
@@ -49,6 +51,9 @@ public class RiwayatActivity extends AppCompatActivity {
 
         while(cursor.moveToNext()){
 
+            int id =
+                    cursor.getInt(0);
+
             String type =
                     cursor.getString(1);
 
@@ -66,6 +71,7 @@ public class RiwayatActivity extends AppCompatActivity {
 
             transactionList.add(
                     new Transaction(
+                            id,
                             type,
                             amount,
                             category,
@@ -76,6 +82,33 @@ public class RiwayatActivity extends AppCompatActivity {
         }
 
         cursor.close();
+
+        Collections.sort(transactionList, (firstTransaction, secondTransaction) -> {
+            ParsedTransactionDate firstDate =
+                    parseTransactionDate(firstTransaction.getDate());
+            ParsedTransactionDate secondDate =
+                    parseTransactionDate(secondTransaction.getDate());
+
+            if (firstDate.validDate != secondDate.validDate) {
+                return firstDate.validDate ? -1 : 1;
+            }
+
+            if (firstDate.validDate) {
+                if (firstDate.year != secondDate.year) {
+                    return Integer.compare(secondDate.year, firstDate.year);
+                }
+
+                if (firstDate.month != secondDate.month) {
+                    return Integer.compare(secondDate.month, firstDate.month);
+                }
+
+                if (firstDate.day != secondDate.day) {
+                    return Integer.compare(secondDate.day, firstDate.day);
+                }
+            }
+
+            return Integer.compare(secondTransaction.getId(), firstTransaction.getId());
+        });
 
         TransactionAdapter adapter =
                 new TransactionAdapter(transactionList);
@@ -134,5 +167,55 @@ public class RiwayatActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private ParsedTransactionDate parseTransactionDate(String dateText) {
+        if (dateText == null || dateText.trim().isEmpty()) {
+            return ParsedTransactionDate.invalid();
+        }
+
+        String[] dateParts = dateText.trim().split("/");
+
+        if (dateParts.length != 3) {
+            return ParsedTransactionDate.invalid();
+        }
+
+        try {
+            int day = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]);
+            int year = Integer.parseInt(dateParts[2]);
+
+            if (month < 1 || month > 12) {
+                return ParsedTransactionDate.invalid();
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setLenient(false);
+            calendar.clear();
+            calendar.set(year, month - 1, day);
+            calendar.getTime();
+
+            return new ParsedTransactionDate(true, day, month, year);
+        } catch (IllegalArgumentException exception) {
+            return ParsedTransactionDate.invalid();
+        }
+    }
+
+    private static class ParsedTransactionDate {
+        boolean validDate;
+        int day;
+        int month;
+        int year;
+
+        ParsedTransactionDate(boolean validDate, int day, int month, int year) {
+            this.validDate = validDate;
+            this.day = day;
+            this.month = month;
+            this.year = year;
+        }
+
+        static ParsedTransactionDate invalid() {
+            return new ParsedTransactionDate(false, 0, 0, 0);
+        }
     }
 }
