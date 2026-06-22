@@ -38,6 +38,7 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         RadioButton radioPengeluaran = findViewById(R.id.radioPengeluaran);
         RadioButton radioPemasukan = findViewById(R.id.radioPemasukan);
         Spinner spKategori = findViewById(R.id.spKategori);
+        ScrollView inputScrollView = findViewById(R.id.inputScrollView);
         View btnSimpan = findViewById(R.id.btnSimpan);
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
@@ -106,6 +107,29 @@ public class TambahTransaksiActivity extends AppCompatActivity {
             }
         });
 
+        etCatatan.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                scrollToCatatan(inputScrollView, etCatatan);
+            }
+        });
+        etCatatan.setOnClickListener(view -> scrollToCatatan(inputScrollView, etCatatan));
+        etCatatan.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (etCatatan.hasFocus()) {
+                    scrollToCatatan(inputScrollView, etCatatan);
+                }
+            }
+        });
+
         // =========================
         // 2. DATE PICKER
         // =========================
@@ -170,6 +194,20 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         // 4. BATAL
         // =========================
         btnBatal.setOnClickListener(v -> finish());
+    }
+
+    private void scrollToCatatan(ScrollView inputScrollView, View catatanView) {
+        View noteContainer = (View) catatanView.getParent();
+        int scrollTarget = noteContainer.getBottom();
+
+        inputScrollView.postDelayed(
+                () -> inputScrollView.smoothScrollTo(0, scrollTarget),
+                250
+        );
+        inputScrollView.postDelayed(
+                () -> inputScrollView.smoothScrollTo(0, scrollTarget),
+                450
+        );
     }
 
     private void setupCategorySelector(RadioGroup radioGroup) {
