@@ -68,37 +68,44 @@
                 android:textColor="#262A24"
                 android:textSize="10sp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_height="72dp">
 
                 <TextView
+                    android:id="@+id/tvNominalCurrency"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_bold"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
                     android:text="Rp"
                     android:textColor="#306D29"
-                    android:textSize="24sp" />
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/etNominal"
+                    app:layout_constraintEnd_toStartOf="@id/etNominal"
+                    app:layout_constraintTop_toTopOf="@id/etNominal"
+                    android:layout_marginEnd="22dp" />
 
                 <EditText
                     android:id="@+id/etNominal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:background="@drawable/input_amount_bg"
                     android:fontFamily="@font/roboto_bold"
                     android:gravity="center"
                     android:hint="0"
-                    android:inputType="numberDecimal"
+                    android:inputType="number"
                     android:minWidth="120dp"
                     android:padding="0dp"
                     android:singleLine="true"
                     android:textColor="#306D29"
                     android:textColorHint="#7CA877"
-                    android:textSize="24sp" />
-            </LinearLayout>
+                    android:textCursorDrawable="@null"
+                    android:textSize="32sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -114,12 +121,13 @@
                 android:layout_height="36dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/input_date_pill_bg"
+                android:clickable="true"
                 android:elevation="2dp"
+                android:focusable="true"
                 android:gravity="center"
-                android:minWidth="156dp"
                 android:orientation="horizontal"
                 android:paddingStart="12dp"
-                android:paddingEnd="14dp">
+                android:paddingEnd="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -133,11 +141,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:duplicateParentState="true"
                     android:fontFamily="@font/plus_jakarta_sans_medium"
                     android:gravity="center"
-                    android:text="Pilih Tanggal..."
+                    android:singleLine="true"
+                    android:text="Hari ini"
                     android:textColor="#262A24"
                     android:textSize="12sp" />
             </LinearLayout>
