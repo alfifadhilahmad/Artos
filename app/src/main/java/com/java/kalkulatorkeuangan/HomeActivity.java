@@ -496,14 +496,16 @@ public class HomeActivity extends AppCompatActivity {
             return R.drawable.ic_category_entertainment_active;
         } else if (normalizedCategory.contains("kesehatan")) {
             return R.drawable.ic_category_health_active;
-        } else if (normalizedCategory.contains("rumah")) {
+        } else if (normalizedCategory.contains("rumah") || normalizedCategory.contains("sewa kos")) {
             return R.drawable.ic_category_house_active;
         } else if (normalizedCategory.contains("tabungan")) {
             return R.drawable.ic_category_savings_active;
         } else if (normalizedCategory.contains("belanja")) {
             return R.drawable.ic_category_shopping_active;
-        } else if (normalizedCategory.contains("snack")) {
+        } else if (normalizedCategory.contains("snack") || normalizedCategory.contains("camilan")) {
             return R.drawable.ic_category_snack_active;
+        } else if (normalizedCategory.contains("lain")) {
+            return R.drawable.ic_category_other_active;
         } else if ("Pengeluaran".equalsIgnoreCase(type)) {
             return R.drawable.ic_expenditure_active;
         }

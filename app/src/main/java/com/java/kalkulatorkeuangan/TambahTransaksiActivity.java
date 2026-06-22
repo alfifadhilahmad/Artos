@@ -12,11 +12,18 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class TambahTransaksiActivity extends AppCompatActivity {
+    private static final String CATEGORY_PEMASUKAN = "Pemasukan";
+    private static final String CATEGORY_MAKANAN = "Makanan";
+    private static final int CATEGORY_INACTIVE_COLOR = 0xFF555C50;
+
     private String selectedDateForDb;
+    private String selectedCategory = CATEGORY_MAKANAN;
     private int selectedYear;
     private int selectedMonth;
     private int selectedDay;
     private boolean isFormattingNominal;
+    private boolean isSyncingTypeAndCategory;
+    private CategoryOption[] categoryOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +56,22 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spKategori.setAdapter(adapter);
 
+        setupCategorySelector(radioGroup);
+
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            radioPengeluaran.setTextColor(
-                    checkedId == R.id.radioPengeluaran
-                            ? android.graphics.Color.parseColor("#306D29")
-                            : android.graphics.Color.parseColor("#262A24"));
-            radioPemasukan.setTextColor(
-                    checkedId == R.id.radioPemasukan
-                            ? android.graphics.Color.parseColor("#306D29")
-                            : android.graphics.Color.parseColor("#262A24"));
+            updateTypeSegmentColors(checkedId, radioPengeluaran, radioPemasukan);
+
+            if (isSyncingTypeAndCategory) {
+                return;
+            }
+
+            if (checkedId == R.id.radioPemasukan) {
+                updateCategorySelection(CATEGORY_PEMASUKAN, radioGroup);
+            } else if (CATEGORY_PEMASUKAN.equals(selectedCategory)) {
+                updateCategorySelection(CATEGORY_MAKANAN, radioGroup);
+            }
         });
+        updateCategorySelection(CATEGORY_MAKANAN, radioGroup);
 
         Calendar today = Calendar.getInstance();
         setSelectedDate(
@@ -133,7 +146,7 @@ public class TambahTransaksiActivity extends AppCompatActivity {
 
             String tipe = selectedId == R.id.radioPemasukan ? "Pemasukan" : "Pengeluaran";
 
-            String kategori = spKategori.getSelectedItem().toString();
+            String kategori = selectedCategory;
 
             double nominal = Double.parseDouble(nominalText);
 
@@ -157,6 +170,84 @@ public class TambahTransaksiActivity extends AppCompatActivity {
         // 4. BATAL
         // =========================
         btnBatal.setOnClickListener(v -> finish());
+    }
+
+    private void setupCategorySelector(RadioGroup radioGroup) {
+        categoryOptions = new CategoryOption[] {
+                new CategoryOption(CATEGORY_PEMASUKAN, R.id.catPemasukan, R.id.ivCatPemasukan,
+                        R.id.tvCatPemasukan, R.drawable.ic_category_income_active,
+                        R.drawable.ic_category_income_inactive, 0xFF306D29),
+                new CategoryOption(CATEGORY_MAKANAN, R.id.catMakanan, R.id.ivCatMakanan,
+                        R.id.tvCatMakanan, R.drawable.ic_category_food_active,
+                        R.drawable.ic_category_food_inactive, 0xFF8A4600),
+                new CategoryOption("Camilan", R.id.catCamilan, R.id.ivCatCamilan,
+                        R.id.tvCatCamilan, R.drawable.ic_category_snack_active,
+                        R.drawable.ic_category_snack_inactive, 0xFF0053A4),
+                new CategoryOption("Belanja", R.id.catBelanja, R.id.ivCatBelanja,
+                        R.id.tvCatBelanja, R.drawable.ic_category_shopping_active,
+                        R.drawable.ic_category_shopping_inactive, 0xFF6E28A8),
+                new CategoryOption("Tagihan", R.id.catTagihan, R.id.ivCatTagihan,
+                        R.id.tvCatTagihan, R.drawable.ic_category_bill_active,
+                        R.drawable.ic_category_bill_inactive, 0xFFB3261E),
+                new CategoryOption("Kesehatan", R.id.catKesehatan, R.id.ivCatKesehatan,
+                        R.id.tvCatKesehatan, R.drawable.ic_category_health_active,
+                        R.drawable.ic_category_health_inactive, 0xFF00796B),
+                new CategoryOption("Edukasi", R.id.catEdukasi, R.id.ivCatEdukasi,
+                        R.id.tvCatEdukasi, R.drawable.ic_category_education_active,
+                        R.drawable.ic_category_education_inactive, 0xFF0076A8),
+                new CategoryOption("Hiburan", R.id.catHiburan, R.id.ivCatHiburan,
+                        R.id.tvCatHiburan, R.drawable.ic_category_entertainment_active,
+                        R.drawable.ic_category_entertainment_inactive, 0xFFC2185B),
+                new CategoryOption("Tabungan", R.id.catTabungan, R.id.ivCatTabungan,
+                        R.id.tvCatTabungan, R.drawable.ic_category_savings_active,
+                        R.drawable.ic_category_savings_inactive, 0xFF8A6D00),
+                new CategoryOption("Sewa Kos", R.id.catSewaKos, R.id.ivCatSewaKos,
+                        R.id.tvCatSewaKos, R.drawable.ic_category_house_active,
+                        R.drawable.ic_category_house_inactive, 0xFF5145B5),
+                new CategoryOption("Lainnya", R.id.catLainnya, R.id.ivCatLainnya,
+                        R.id.tvCatLainnya, R.drawable.ic_category_other_active,
+                        R.drawable.ic_category_other_inactive, 0xFF555C50)
+        };
+
+        for (CategoryOption option : categoryOptions) {
+            findViewById(option.rootId).setOnClickListener(v ->
+                    updateCategorySelection(option.name, radioGroup));
+        }
+    }
+
+    private void updateCategorySelection(String category, RadioGroup radioGroup) {
+        selectedCategory = category;
+
+        for (CategoryOption option : categoryOptions) {
+            boolean isSelected = option.name.equals(category);
+            ImageView icon = findViewById(option.iconId);
+            TextView label = findViewById(option.labelId);
+
+            icon.setImageResource(isSelected ? option.activeIconRes : option.inactiveIconRes);
+            label.setTextColor(isSelected ? option.selectedColor : CATEGORY_INACTIVE_COLOR);
+        }
+
+        isSyncingTypeAndCategory = true;
+        if (CATEGORY_PEMASUKAN.equals(category)) {
+            radioGroup.check(R.id.radioPemasukan);
+        } else {
+            radioGroup.check(R.id.radioPengeluaran);
+        }
+        isSyncingTypeAndCategory = false;
+    }
+
+    private void updateTypeSegmentColors(
+            int checkedId,
+            RadioButton radioPengeluaran,
+            RadioButton radioPemasukan) {
+        radioPengeluaran.setTextColor(
+                checkedId == R.id.radioPengeluaran
+                        ? android.graphics.Color.parseColor("#306D29")
+                        : android.graphics.Color.parseColor("#262A24"));
+        radioPemasukan.setTextColor(
+                checkedId == R.id.radioPemasukan
+                        ? android.graphics.Color.parseColor("#306D29")
+                        : android.graphics.Color.parseColor("#262A24"));
     }
 
     private void setSelectedDate(TextView tvTanggal, int year, int month, int day) {
@@ -237,6 +328,33 @@ public class TambahTransaksiActivity extends AppCompatActivity {
             return String.format(Locale.US, "%,d", Long.parseLong(value)).replace(",", ".");
         } catch (NumberFormatException exception) {
             return value;
+        }
+    }
+
+    private static class CategoryOption {
+        String name;
+        int rootId;
+        int iconId;
+        int labelId;
+        int activeIconRes;
+        int inactiveIconRes;
+        int selectedColor;
+
+        CategoryOption(
+                String name,
+                int rootId,
+                int iconId,
+                int labelId,
+                int activeIconRes,
+                int inactiveIconRes,
+                int selectedColor) {
+            this.name = name;
+            this.rootId = rootId;
+            this.iconId = iconId;
+            this.labelId = labelId;
+            this.activeIconRes = activeIconRes;
+            this.inactiveIconRes = inactiveIconRes;
+            this.selectedColor = selectedColor;
         }
     }
 }

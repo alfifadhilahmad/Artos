@@ -166,7 +166,363 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/input_spinner_bg"
                 android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
+                android:paddingEnd="12dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/catPemasukan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatPemasukan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_income_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatPemasukan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Pemasukan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catMakanan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatMakanan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_food_active" />
+
+                        <TextView
+                            android:id="@+id/tvCatMakanan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Makanan"
+                            android:textColor="#8A4600"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catCamilan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatCamilan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_snack_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatCamilan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Camilan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catBelanja"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatBelanja"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_shopping_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatBelanja"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Belanja"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catTagihan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatTagihan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_bill_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatTagihan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Tagihan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catKesehatan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatKesehatan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_health_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatKesehatan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Kesehatan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/catEdukasi"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatEdukasi"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_education_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatEdukasi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Edukasi"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catHiburan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatHiburan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_entertainment_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatHiburan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Hiburan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catTabungan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatTabungan"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_savings_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatTabungan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Tabungan"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catSewaKos"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatSewaKos"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_house_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatSewaKos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Sewa Kos"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catLainnya"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivCatLainnya"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_category_other_inactive" />
+
+                        <TextView
+                            android:id="@+id/tvCatLainnya"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Lainnya"
+                            android:textColor="#555C50"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
