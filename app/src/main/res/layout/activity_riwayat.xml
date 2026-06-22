@@ -4,32 +4,268 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FAFAFA">
+    android:background="#FFFDF7">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="40dp"
         android:paddingStart="16dp"
+        android:paddingTop="40dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="100dp">
+        android:paddingBottom="104dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/searchRiwayatContainer"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/riwayat_search_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="@null"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="#8A8F83" />
+
+            <EditText
+                android:id="@+id/etSearchRiwayat"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:hint="Cari transaksi..."
+                android:inputType="text"
+                android:padding="0dp"
+                android:singleLine="true"
+                android:textColor="#262A24"
+                android:textColorHint="#8A8F83"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/riwayatChipScroll"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Riwayat Transaksi"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="14dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/riwayatChipContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="2dp">
+
+                <TextView
+                    android:id="@+id/chipSemua"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/riwayat_chip_active_bg"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Semua"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipPemasukan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Pemasukan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipMakanan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Makanan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipCamilan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Camilan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipBelanja"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Belanja"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipTagihan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Tagihan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipKesehatan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Kesehatan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipEdukasi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Edukasi"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipHiburan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Hiburan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipTabungan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Tabungan"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipSewaKos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Sewa Kos"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chipLainnya"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="1dp"
+                    android:background="@drawable/riwayat_chip_inactive_bg"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:minWidth="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Lainnya"
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRiwayat"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="18dp"
             android:layout_weight="1"
-            android:layout_marginTop="20dp" />
-
+            android:clipToPadding="false"
+            android:paddingBottom="8dp" />
     </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -58,12 +294,12 @@
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/outline_add_24"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="#4CAF50"
         app:backgroundTint="#FDF5E6"
         app:fabCustomSize="64dp"
+        app:layout_anchor="@id/bottomAppBar"
         app:maxImageSize="32dp"
-        app:shapeAppearanceOverlay="@style/TombolBulatSempurna" />
+        app:shapeAppearanceOverlay="@style/TombolBulatSempurna"
+        app:srcCompat="@drawable/outline_add_24"
+        app:tint="#4CAF50" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
