@@ -36,75 +36,125 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="186dp"
+                android:layout_height="240dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/home_balance_card_bg"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/plus_jakarta_sans_medium"
-                            android:text="Total Saldo"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="3dp"
-                            android:fontFamily="@font/plus_jakarta_sans_semibold"
-                            android:letterSpacing="0.08"
-                            android:text="SISA KEUANGAN POSITIF"
-                            android:textColor="#DDEEDB"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:background="@drawable/home_chip_bg"
-                        android:fontFamily="@font/plus_jakarta_sans_semibold"
-                        android:gravity="center"
-                        android:minWidth="92dp"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:text="Juni 2026"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:text="Total Saldo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tvSaldo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="4dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_bold"
                     android:maxLines="1"
                     android:text="Rp 0"
                     android:textColor="#FFFFFF"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/cardSaldoBulanIni"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_weight="1"
+                    android:layout_height="78dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/home_monthly_card_bg"
+                    android:orientation="vertical"
+                    android:paddingStart="12dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvBulanSaldoBulanIni"
+                            android:layout_width="wrap_content"
+                            android:layout_height="26dp"
+                            android:background="@drawable/home_month_chip_bg"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:minWidth="92dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:text="Juni 2026"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tvStatusSaldoBulanIni"
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:background="@drawable/home_status_positive_bg"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:minWidth="58dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:text="Positif"
+                            android:textColor="@color/home_primary_green"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="bottom|center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvLabelSaldoBulanIni"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:text="Saldo Bulan Ini"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tvSaldoBulanIni"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans_bold"
+                            android:gravity="end"
+                            android:text="+ Rp 0"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -114,14 +164,14 @@
                         android:background="@drawable/home_stat_card_bg"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="10dp">
+                        android:paddingStart="10dp"
+                        android:paddingEnd="8dp">
 
                         <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/baseline_arrow_upward_24"
-                            app:tint="#FFFFFF"/>
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_income" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -136,7 +186,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans_medium"
                                 android:text="Pemasukan"
                                 android:textColor="#F1F8F0"
-                                android:textSize="11sp" />
+                                android:textSize="10sp" />
 
                             <TextView
                                 android:id="@+id/tvPemasukan"
@@ -148,7 +198,7 @@
                                 android:maxLines="1"
                                 android:text="Rp 0"
                                 android:textColor="#FFFFFF"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
@@ -165,14 +215,14 @@
                         android:background="@drawable/home_stat_card_bg"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="10dp">
+                        android:paddingStart="10dp"
+                        android:paddingEnd="8dp">
 
                         <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/outline_arrow_downward_24"
-                            app:tint="#FFFFFF"/>
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_expense" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -187,7 +237,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans_medium"
                                 android:text="Pengeluaran"
                                 android:textColor="#F1F8F0"
-                                android:textSize="11sp" />
+                                android:textSize="10sp" />
 
                             <TextView
                                 android:id="@+id/tvPengeluaran"
@@ -199,7 +249,7 @@
                                 android:maxLines="1"
                                 android:text="Rp 0"
                                 android:textColor="#FFFFFF"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
