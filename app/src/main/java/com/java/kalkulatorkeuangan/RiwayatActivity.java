@@ -55,6 +55,9 @@ public class RiwayatActivity extends AppCompatActivity {
             double amount =
                     cursor.getDouble(2);
 
+            String category =
+                    cursor.getString(3);
+
             String note =
                     cursor.getString(4);
 
@@ -65,6 +68,7 @@ public class RiwayatActivity extends AppCompatActivity {
                     new Transaction(
                             type,
                             amount,
+                            category,
                             note,
                             date
                     )
