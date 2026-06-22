@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.animation.ObjectAnimator;
 import android.view.animation.DecelerateInterpolator;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
@@ -78,6 +79,9 @@ public class HomeActivity extends AppCompatActivity {
         TextView tvSaldo = findViewById(R.id.tvSaldo);
         TextView tvPemasukan = findViewById(R.id.tvPemasukan);
         TextView tvPengeluaran = findViewById(R.id.tvPengeluaran);
+        TextView tvBulanSaldoBulanIni = findViewById(R.id.tvBulanSaldoBulanIni);
+        TextView tvStatusSaldoBulanIni = findViewById(R.id.tvStatusSaldoBulanIni);
+        TextView tvSaldoBulanIni = findViewById(R.id.tvSaldoBulanIni);
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
 
@@ -85,9 +89,20 @@ public class HomeActivity extends AppCompatActivity {
         double totalPengeluaran = dbHelper.getTotalPengeluaran();
         double saldo = totalPemasukan - totalPengeluaran;
 
-        tvSaldo.setText("Rp " + String.format("%,.0f", saldo));
-        tvPemasukan.setText("Rp " + String.format("%,.0f", totalPemasukan));
-        tvPengeluaran.setText("Rp " + String.format("%,.0f", totalPengeluaran));
+        Calendar currentDate = Calendar.getInstance();
+        int currentMonth = currentDate.get(Calendar.MONTH) + 1;
+        int currentYear = currentDate.get(Calendar.YEAR);
+        double[] monthlyTotals = calculateCurrentMonthTotals(dbHelper, currentMonth, currentYear);
+        double monthlyPemasukan = monthlyTotals[0];
+        double monthlyPengeluaran = monthlyTotals[1];
+        double monthlySaldo = monthlyPemasukan - monthlyPengeluaran;
+
+        tvSaldo.setText(formatRupiah(saldo));
+        tvPemasukan.setText(formatRupiah(monthlyPemasukan));
+        tvPengeluaran.setText(formatRupiah(monthlyPengeluaran));
+        tvBulanSaldoBulanIni.setText(formatIndonesianMonthYear(currentDate));
+        tvSaldoBulanIni.setText(formatSignedRupiah(monthlySaldo));
+        bindMonthlyStatus(tvStatusSaldoBulanIni, monthlySaldo);
 
         updateRecentTransactions(dbHelper);
 
@@ -139,6 +154,91 @@ public class HomeActivity extends AppCompatActivity {
         String formattedAmount = String.format(Locale.US, "%,.0f", Math.abs(amount)).replace(",", ".");
         String prefix = amount < 0 ? "- Rp " : "Rp ";
         return prefix + formattedAmount;
+    }
+
+    private String formatSignedRupiah(double amount) {
+        String formattedAmount = String.format(Locale.US, "%,.0f", Math.abs(amount)).replace(",", ".");
+        String prefix = amount < 0 ? "- Rp " : "+ Rp ";
+        return prefix + formattedAmount;
+    }
+
+    private String formatIndonesianMonthYear(Calendar date) {
+        String[] monthNames = {
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        };
+
+        return monthNames[date.get(Calendar.MONTH)] + " " + date.get(Calendar.YEAR);
+    }
+
+    private void bindMonthlyStatus(TextView statusView, double monthlySaldo) {
+        if (monthlySaldo < 0) {
+            statusView.setText("Negatif");
+            statusView.setTextColor(Color.parseColor("#B3261E"));
+            statusView.setBackgroundResource(R.drawable.home_status_negative_bg);
+        } else {
+            statusView.setText("Positif");
+            statusView.setTextColor(Color.parseColor("#306D29"));
+            statusView.setBackgroundResource(R.drawable.home_status_positive_bg);
+        }
+    }
+
+    private double[] calculateCurrentMonthTotals(DatabaseHelper dbHelper, int currentMonth, int currentYear) {
+        double[] totals = new double[2];
+        Cursor cursor = dbHelper.getAllTransactions();
+
+        try {
+            int typeIndex = cursor.getColumnIndex("type");
+            int amountIndex = cursor.getColumnIndex("amount");
+            int dateIndex = cursor.getColumnIndex("date");
+
+            if (typeIndex == -1 || amountIndex == -1 || dateIndex == -1) {
+                return totals;
+            }
+
+            while (cursor.moveToNext()) {
+                if (cursor.isNull(amountIndex)) {
+                    continue;
+                }
+
+                String date = getCursorString(cursor, dateIndex);
+                if (!isCurrentMonthDate(date, currentMonth, currentYear)) {
+                    continue;
+                }
+
+                String type = getCursorString(cursor, typeIndex);
+                double amount = cursor.getDouble(amountIndex);
+
+                if ("Pemasukan".equalsIgnoreCase(type)) {
+                    totals[0] += amount;
+                } else if ("Pengeluaran".equalsIgnoreCase(type)) {
+                    totals[1] += amount;
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return totals;
+    }
+
+    private boolean isCurrentMonthDate(String date, int currentMonth, int currentYear) {
+        if (date == null || date.isEmpty()) {
+            return false;
+        }
+
+        String[] parts = date.split("/");
+        if (parts.length != 3) {
+            return false;
+        }
+
+        try {
+            int month = Integer.parseInt(parts[1].trim());
+            int year = Integer.parseInt(parts[2].trim());
+            return month == currentMonth && year == currentYear;
+        } catch (NumberFormatException exception) {
+            return false;
+        }
     }
 
     private void updateRecentTransactions(DatabaseHelper dbHelper) {
