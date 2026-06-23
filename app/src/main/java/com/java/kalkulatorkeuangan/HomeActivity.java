@@ -122,11 +122,11 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("BudgetPrefs", MODE_PRIVATE);
         double targetBudget = prefs.getFloat("budget", 5000000);
 
-        double sisaBudget = targetBudget - totalPengeluaran;
+        double sisaBudget = targetBudget - monthlyPengeluaran;
         int persenTerpakai = 0;
 
         if (targetBudget > 0) {
-            persenTerpakai = (int) ((totalPengeluaran / targetBudget) * 100);
+            persenTerpakai = (int) ((monthlyPengeluaran / targetBudget) * 100);
         }
 
         if (persenTerpakai > 100) {
@@ -134,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         tvBudgetBulanan.setText("Budget");
-        tvTerpakai.setText("- " + formatRupiah(totalPengeluaran));
+        tvTerpakai.setText("- " + formatRupiah(monthlyPengeluaran));
         tvTerpakai.setTextColor(Color.parseColor("#B3261E"));
         tvPersenBudget.setText(persenTerpakai + "% digunakan");
         tvPersenBudget.setVisibility(View.GONE);

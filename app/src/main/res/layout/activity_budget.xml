@@ -26,7 +26,7 @@
                 android:background="#306D29"
                 android:orientation="vertical"
                 android:paddingStart="16dp"
-                android:paddingTop="52dp"
+                android:paddingTop="48dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="24dp">
 
@@ -47,14 +47,14 @@
 
                     <LinearLayout
                         android:layout_width="64dp"
-                        android:layout_height="44dp"
+                        android:layout_height="32dp"
                         android:gravity="end"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tvBudgetEdit"
                             android:layout_width="match_parent"
-                            android:layout_height="44dp"
+                            android:layout_height="32dp"
                             android:fontFamily="@font/plus_jakarta_sans_medium"
                             android:gravity="end|center_vertical"
                             android:includeFontPadding="false"
@@ -68,7 +68,7 @@
                     android:id="@+id/tvSisaBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="0.5dp"
                     android:fontFamily="@font/roboto_bold"
                     android:text="Rp 3.000.000"
                     android:textColor="#FFFFFF"
@@ -79,7 +79,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="16dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="24dp"
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="45"
@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="94dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="-24dp"
+                android:layout_marginTop="-8dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/pengeluaran_chart_card_bg"
                 android:elevation="4dp"
@@ -202,7 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="236dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/pengeluaran_chart_card_bg"
                 android:elevation="4dp"
@@ -230,20 +230,41 @@
                     android:textColor="#8A8F83"
                     android:textSize="12sp" />
 
-                <EditText
-                    android:id="@+id/etTargetBudget"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/input_note_bg"
-                    android:fontFamily="@font/plus_jakarta_sans_medium"
-                    android:hint="Rp 3.000.000"
-                    android:inputType="number"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:textColor="#262A24"
-                    android:textColorHint="#8A8F83"
-                    android:textSize="12sp" />
+                    android:paddingEnd="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Rp"
+                        android:textColor="#262A24"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/etTargetBudget"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:gravity="center_vertical"
+                        android:hint="3.000.000"
+                        android:includeFontPadding="false"
+                        android:inputType="number"
+                        android:padding="0dp"
+                        android:textColor="#262A24"
+                        android:textColorHint="#8A8F83"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
