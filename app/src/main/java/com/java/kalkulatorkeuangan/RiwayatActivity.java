@@ -30,10 +30,16 @@ import java.util.Collections;
 import java.util.Locale;
 
 public class RiwayatActivity extends AppCompatActivity {
+    private static final String FILTER_SEMUA = "Semua";
+    private static final int CHIP_ACTIVE_TEXT_COLOR = 0xFFFFFFFF;
+    private static final int CHIP_INACTIVE_TEXT_COLOR = 0xFF8A8F83;
+
     private final ArrayList<Transaction> allTransactions = new ArrayList<>();
     private RecyclerView rvRiwayat;
     private TextView tvRiwayatEmpty;
     private String currentSearchQuery = "";
+    private String currentCategoryFilter = FILTER_SEMUA;
+    private ChipFilterOption[] chipFilterOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +104,7 @@ public class RiwayatActivity extends AppCompatActivity {
 
         cursor.close();
 
-        applySearchAndRender();
+        applyFiltersAndRender();
 
         etSearchRiwayat.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +114,7 @@ public class RiwayatActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentSearchQuery = s == null ? "" : s.toString();
-                applySearchAndRender();
+                applyFiltersAndRender();
             }
 
             @Override
@@ -129,6 +135,7 @@ public class RiwayatActivity extends AppCompatActivity {
 
             return false;
         });
+        setupFilterChips();
 
         Toast.makeText(
                 this,
@@ -184,9 +191,9 @@ public class RiwayatActivity extends AppCompatActivity {
         });
     }
 
-    private void applySearchAndRender() {
+    private void applyFiltersAndRender() {
         ArrayList<Transaction> filteredTransactions =
-                filterTransactions(currentSearchQuery);
+                filterTransactions();
 
         sortTransactions(filteredTransactions);
 
@@ -204,6 +211,51 @@ public class RiwayatActivity extends AppCompatActivity {
         }
     }
 
+    private void setupFilterChips() {
+        chipFilterOptions = new ChipFilterOption[] {
+                new ChipFilterOption(FILTER_SEMUA, R.id.chipSemua),
+                new ChipFilterOption("Pemasukan", R.id.chipPemasukan),
+                new ChipFilterOption("Makanan", R.id.chipMakanan),
+                new ChipFilterOption("Camilan", R.id.chipCamilan),
+                new ChipFilterOption("Belanja", R.id.chipBelanja),
+                new ChipFilterOption("Tagihan", R.id.chipTagihan),
+                new ChipFilterOption("Kesehatan", R.id.chipKesehatan),
+                new ChipFilterOption("Edukasi", R.id.chipEdukasi),
+                new ChipFilterOption("Hiburan", R.id.chipHiburan),
+                new ChipFilterOption("Tabungan", R.id.chipTabungan),
+                new ChipFilterOption("Sewa Kos", R.id.chipSewaKos),
+                new ChipFilterOption("Lainnya", R.id.chipLainnya)
+        };
+
+        for (ChipFilterOption option : chipFilterOptions) {
+            TextView chip = findViewById(option.viewId);
+            chip.setOnClickListener(v -> {
+                currentCategoryFilter = option.filterValue;
+                updateChipSelection();
+                applyFiltersAndRender();
+            });
+        }
+
+        updateChipSelection();
+    }
+
+    private void updateChipSelection() {
+        for (ChipFilterOption option : chipFilterOptions) {
+            TextView chip = findViewById(option.viewId);
+            boolean isActive = option.filterValue.equals(currentCategoryFilter);
+            chip.setBackgroundResource(
+                    isActive
+                            ? R.drawable.riwayat_chip_active_bg
+                            : R.drawable.riwayat_chip_inactive_bg
+            );
+            chip.setTextColor(
+                    isActive
+                            ? CHIP_ACTIVE_TEXT_COLOR
+                            : CHIP_INACTIVE_TEXT_COLOR
+            );
+        }
+    }
+
     private void hideKeyboardAndClearFocus(View focusedView) {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -215,26 +267,43 @@ public class RiwayatActivity extends AppCompatActivity {
         focusedView.clearFocus();
     }
 
-    private ArrayList<Transaction> filterTransactions(String query) {
+    private ArrayList<Transaction> filterTransactions() {
         ArrayList<Transaction> filteredTransactions = new ArrayList<>();
-        String normalizedQuery = query == null
+        String normalizedQuery = currentSearchQuery == null
                 ? ""
-                : query.trim().toLowerCase(Locale.ROOT);
-
-        if (normalizedQuery.isEmpty()) {
-            filteredTransactions.addAll(allTransactions);
-            return filteredTransactions;
-        }
+                : currentSearchQuery.trim().toLowerCase(Locale.ROOT);
 
         for (Transaction transaction : allTransactions) {
-            if (containsQuery(transaction.getNote(), normalizedQuery)
-                    || containsQuery(transaction.getCategory(), normalizedQuery)
-                    || containsQuery(transaction.getType(), normalizedQuery)) {
+            if (matchesCategoryFilter(transaction)
+                    && matchesSearchQuery(transaction, normalizedQuery)) {
                 filteredTransactions.add(transaction);
             }
         }
 
         return filteredTransactions;
+    }
+
+    private boolean matchesCategoryFilter(Transaction transaction) {
+        if (FILTER_SEMUA.equals(currentCategoryFilter)) {
+            return true;
+        }
+
+        if ("Pemasukan".equals(currentCategoryFilter)) {
+            return "Pemasukan".equalsIgnoreCase(transaction.getType())
+                    || "Pemasukan".equalsIgnoreCase(transaction.getCategory());
+        }
+
+        return currentCategoryFilter.equalsIgnoreCase(transaction.getCategory());
+    }
+
+    private boolean matchesSearchQuery(Transaction transaction, String normalizedQuery) {
+        if (normalizedQuery.isEmpty()) {
+            return true;
+        }
+
+        return containsQuery(transaction.getNote(), normalizedQuery)
+                || containsQuery(transaction.getCategory(), normalizedQuery)
+                || containsQuery(transaction.getType(), normalizedQuery);
     }
 
     private boolean containsQuery(String value, String query) {
@@ -318,6 +387,16 @@ public class RiwayatActivity extends AppCompatActivity {
 
         static ParsedTransactionDate invalid() {
             return new ParsedTransactionDate(false, 0, 0, 0);
+        }
+    }
+
+    private static class ChipFilterOption {
+        String filterValue;
+        int viewId;
+
+        ChipFilterOption(String filterValue, int viewId) {
+            this.filterValue = filterValue;
+            this.viewId = viewId;
         }
     }
 }
