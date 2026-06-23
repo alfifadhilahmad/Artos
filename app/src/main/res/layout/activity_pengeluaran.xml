@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA">
+    android:background="#FFFDF7">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -16,50 +16,352 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="40dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Analisis Pengeluaran"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="#4CAF50"
+                android:layout_height="245dp"
+                android:background="#306D29"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:paddingStart="20dp"
+                android:paddingTop="48dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Keluar"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:text="Total Pengeluaran"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tvTotalPengeluaran"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/roboto_bold"
                     android:text="Rp 0"
                     android:textColor="#FFFFFF"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/pengeluaran_month_chip_bg"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="Juni 2026"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="224dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="-56dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/pengeluaran_chart_card_bg"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:text="Avg 6 bulan terakhir Rp1,5Jt"
+                    android:textColor="#FFA43C"
+                    android:textSize="10sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="42dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="2,5Jt"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="2Jt"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="1,5Jt"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="1Jt"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="500rb"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/plus_jakarta_sans_regular"
+                            android:gravity="center_vertical|end"
+                            android:text="0rb"
+                            android:textColor="#8A8F83"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="8dp"
+                                android:background="#EDEDE8" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="32dp"
+                                android:background="#EDEDE8" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="56dp"
+                                android:background="#EDEDE8" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="80dp"
+                                android:background="#EDEDE8" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="104dp"
+                                android:background="#EDEDE8" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:layout_marginTop="54dp"
+                                android:background="#FFA43C" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="bottom"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="58dp"
+                                        android:background="@drawable/pengeluaran_bar_inactive_bg" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="74dp"
+                                        android:background="@drawable/pengeluaran_bar_inactive_bg" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="48dp"
+                                        android:background="@drawable/pengeluaran_bar_inactive_bg" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="88dp"
+                                        android:background="@drawable/pengeluaran_bar_inactive_bg" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="66dp"
+                                        android:background="@drawable/pengeluaran_bar_inactive_bg" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|center_horizontal">
+
+                                    <View
+                                        android:layout_width="14dp"
+                                        android:layout_height="112dp"
+                                        android:background="@drawable/pengeluaran_bar_active_bg" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Jan 26"
+                                android:textColor="#8A8F83"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Feb 26"
+                                android:textColor="#8A8F83"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Mar 26"
+                                android:textColor="#8A8F83"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Apr 26"
+                                android:textColor="#8A8F83"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Mei 26"
+                                android:textColor="#8A8F83"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/plus_jakarta_sans_regular"
+                                android:gravity="center"
+                                android:text="Jun 26"
+                                android:textColor="#306D29"
+                                android:textSize="8sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="14dp"
+                android:fontFamily="@font/plus_jakarta_sans_semibold"
                 android:text="Rincian Kategori"
+                android:textColor="#262A24"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -67,6 +369,8 @@
                 android:id="@+id/containerKategori"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:orientation="vertical">
             </LinearLayout>
 

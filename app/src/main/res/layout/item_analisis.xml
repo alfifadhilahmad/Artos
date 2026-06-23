@@ -1,53 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
-    android:background="#FFFFFF"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="66dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/pengeluaran_category_card_bg"
+    android:elevation="3dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_category_other_active" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvNamaKategori"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/plus_jakarta_sans_semibold"
+            android:singleLine="true"
             android:text="Nama Kategori"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#333333"/>
+            android:textColor="#262A24"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tvPersenKategori"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"
             android:text="0%"
-            android:textStyle="bold"
-            android:textColor="#666666"/>
-    </LinearLayout>
+            android:textColor="#8A8F83"
+            android:textSize="8sp" />
 
-    <ProgressBar
-        android:id="@+id/pbKategori"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:max="100"
-        android:progress="0"
-        android:progressTint="#FF9800"/>
+        <ProgressBar
+            android:id="@+id/pbKategori"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:max="100"
+            android:progress="0"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvTotalKategori"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rp 0"
-        android:textColor="#D32F2F"
+        android:fontFamily="@font/plus_jakarta_sans_semibold"
         android:gravity="end"
-        android:textStyle="bold"/>
+        android:text="Rp 0"
+        android:textColor="#B3261E"
+        android:textSize="12sp" />
 </LinearLayout>
