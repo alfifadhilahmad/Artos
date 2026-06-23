@@ -13,8 +13,6 @@ import android.content.Context;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.database.Cursor;
 
 import android.widget.EditText;
@@ -143,42 +141,7 @@ public class RiwayatActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG
         ).show();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-
-        // 2. Ikon riwayat menyala
-        bottomNavigationView.setSelectedItemId(R.id.nav_riwayat);
-
-        // 3. Logika Navigasi Bawah
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_pengeluaran) {
-                startActivity(new Intent(getApplicationContext(), PengeluaranActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_budget) {
-                startActivity(new Intent(getApplicationContext(), BudgetActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_riwayat) {
-                // Kalau klik Riwayat padahal lagi di Riwayat, diam saja
-                return true;
-            }
-            return false;
-        });
-
-        // 4. Logika untuk tombol "+"
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
-        fabAdd.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class));
-        });
+        setupCustomBottomNavigation();
 
         // 5. FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME (Cara Baru Anti-Coret)
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -189,6 +152,30 @@ public class RiwayatActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void setupCustomBottomNavigation() {
+        findViewById(R.id.navHomeButton).setOnClickListener(v ->
+                openBottomNavActivity(HomeActivity.class));
+
+        findViewById(R.id.navPengeluaranButton).setOnClickListener(v ->
+                openBottomNavActivity(PengeluaranActivity.class));
+
+        findViewById(R.id.navBudgetButton).setOnClickListener(v ->
+                openBottomNavActivity(BudgetActivity.class));
+
+        findViewById(R.id.navRiwayatButton).setOnClickListener(v -> {
+            // Already on Riwayat.
+        });
+
+        findViewById(R.id.fabAdd).setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class)));
+    }
+
+    private void openBottomNavActivity(Class<?> destinationActivity) {
+        startActivity(new Intent(getApplicationContext(), destinationActivity));
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     private void applyFiltersAndRender() {
