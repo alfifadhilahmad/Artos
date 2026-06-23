@@ -3,6 +3,7 @@ package com.java.kalkulatorkeuangan;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -200,8 +201,9 @@ public class PengeluaranActivity extends AppCompatActivity {
             TextView emptyText = new TextView(this);
             emptyText.setText("Belum ada pengeluaran bulan ini");
             emptyText.setTextColor(0xFF8A8F83);
-            emptyText.setTextSize(12);
-            emptyText.setPadding(4, 8, 4, 8);
+            emptyText.setTextSize(13);
+            emptyText.setGravity(Gravity.CENTER);
+            emptyText.setPadding(4, 18, 4, 28);
             containerKategori.addView(emptyText);
             return;
         }

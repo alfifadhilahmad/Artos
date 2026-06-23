@@ -30,13 +30,51 @@
                 android:paddingEnd="20dp"
                 android:paddingBottom="24dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/plus_jakarta_sans_medium"
-                    android:text="Total Pengeluaran"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Total Pengeluaran"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:background="@drawable/pengeluaran_month_chip_bg"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="6dp">
+
+                        <TextView
+                            android:id="@+id/tvPengeluaranMonth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="Juni 2026"
+                            android:textColor="#306D29"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="4dp"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="center"
+                            android:text="▾"
+                            android:textColor="#306D29"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvTotalPengeluaran"
@@ -47,20 +85,6 @@
                     android:text="Rp 0"
                     android:textColor="#FFFFFF"
                     android:textSize="32sp" />
-
-                <TextView
-                    android:id="@+id/tvPengeluaranMonth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/pengeluaran_month_chip_bg"
-                    android:fontFamily="@font/plus_jakarta_sans_medium"
-                    android:gravity="center"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:text="Juni 2026"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout

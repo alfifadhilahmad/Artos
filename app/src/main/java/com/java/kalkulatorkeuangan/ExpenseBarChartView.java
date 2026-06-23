@@ -105,11 +105,11 @@ public class ExpenseBarChartView extends View {
             return;
         }
 
-        float leftLabelWidth = dp(42);
-        float topPadding = dp(28);
-        float bottomLabelHeight = dp(24);
-        float chartLeft = leftLabelWidth + dp(8);
-        float chartRight = width - dp(4);
+        float leftLabelWidth = dp(34);
+        float topPadding = dp(16);
+        float bottomLabelHeight = dp(16);
+        float chartLeft = leftLabelWidth + dp(4);
+        float chartRight = width - dp(8);
         float chartTop = topPadding;
         float chartBottom = height - bottomLabelHeight;
         float chartHeight = chartBottom - chartTop;
@@ -152,7 +152,7 @@ public class ExpenseBarChartView extends View {
         float y = valueToY(averageValue, chartTop, chartBottom, chartHeight);
         canvas.drawLine(chartLeft, y, chartRight, y, averagePaint);
 
-        String label = "Avg 6 bulan terakhir " + formatCompactRupiah(averageValue);
+        String label = "Avg " + formatCompactRupiah(averageValue);
         float labelPaddingH = dp(5);
         float labelPaddingV = dp(3);
         float textWidth = averageLabelTextPaint.measureText(label);
