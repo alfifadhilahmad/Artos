@@ -15,7 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class PengeluaranActivity extends AppCompatActivity {
+
+    private static final String[] MONTH_NAMES = {
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +36,19 @@ public class PengeluaranActivity extends AppCompatActivity {
 
         // Inisialisasi View Utama
         TextView tvTotalPengeluaran = findViewById(R.id.tvTotalPengeluaran);
+        TextView tvPengeluaranMonth = findViewById(R.id.tvPengeluaranMonth);
         LinearLayout containerKategori = findViewById(R.id.containerKategori);
 
         // Bersihkan container dulu buat jaga-jaga
         containerKategori.removeAllViews();
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
+        double totalPengeluaranBulanIni = calculateCurrentMonthExpense(dbHelper);
         double totalPengeluaran = dbHelper.getTotalPengeluaran();
 
-        // Set teks total pengeluaran paling atas
-        tvTotalPengeluaran.setText("Rp " + String.format("%.0f", totalPengeluaran));
+        // Set teks total pengeluaran header untuk bulan berjalan.
+        tvTotalPengeluaran.setText(formatRupiah(totalPengeluaranBulanIni));
+        tvPengeluaranMonth.setText(formatCurrentMonthLabel());
 
         Cursor cursor = dbHelper.getExpenseAnalysis();
 
@@ -116,5 +131,73 @@ public class PengeluaranActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class));
         });
+    }
+
+    private double calculateCurrentMonthExpense(DatabaseHelper dbHelper) {
+        double total = 0;
+        Cursor cursor = dbHelper.getAllTransactions();
+
+        if (cursor == null) {
+            return total;
+        }
+
+        Calendar currentCalendar = Calendar.getInstance();
+
+        try {
+            int typeIndex = cursor.getColumnIndex("type");
+            int amountIndex = cursor.getColumnIndex("amount");
+            int dateIndex = cursor.getColumnIndex("date");
+
+            if (typeIndex == -1 || amountIndex == -1 || dateIndex == -1) {
+                return total;
+            }
+
+            while (cursor.moveToNext()) {
+                String type = cursor.getString(typeIndex);
+                String dateText = cursor.getString(dateIndex);
+
+                if ("Pengeluaran".equals(type) && isCurrentMonthDate(dateText, currentCalendar)) {
+                    total += cursor.getDouble(amountIndex);
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return total;
+    }
+
+    private boolean isCurrentMonthDate(String dateText, Calendar currentCalendar) {
+        if (dateText == null || dateText.trim().isEmpty()) {
+            return false;
+        }
+
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+        dbDateFormat.setLenient(false);
+
+        try {
+            Date parsedDate = dbDateFormat.parse(dateText.trim());
+            Calendar transactionCalendar = Calendar.getInstance();
+            transactionCalendar.setTime(parsedDate);
+
+            return transactionCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR)
+                    && transactionCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private String formatRupiah(double amount) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+        numberFormat.setMaximumFractionDigits(0);
+        numberFormat.setMinimumFractionDigits(0);
+        return "Rp " + numberFormat.format(amount);
+    }
+
+    private String formatCurrentMonthLabel() {
+        Calendar calendar = Calendar.getInstance();
+        int monthIndex = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        return MONTH_NAMES[monthIndex] + " " + year;
     }
 }
