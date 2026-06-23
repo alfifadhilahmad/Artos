@@ -4,98 +4,280 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA">
+    android:background="#FFFDF7">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:paddingBottom="112dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="vertical"
-            android:paddingTop="40dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Atur Budget"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/card_transaksi"
+                android:layout_height="245dp"
+                android:background="#306D29"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:paddingStart="16dp"
+                android:paddingTop="52dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="24dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sisa Budget Anda"
-                    android:textSize="16sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Sisa Budget"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvBudgetEdit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:text="Edit"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="1dp"
+                            android:background="#FFFFFF" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvSisaBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp 4.000.000"
-                    android:textSize="32sp"
-                    android:textStyle="bold"
-                    android:textColor="#4CAF50" />
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="Rp 3.000.000"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
 
                 <ProgressBar
                     android:id="@+id/progressBudget"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="12dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="12dp"
+                    android:indeterminate="false"
                     android:max="100"
-                    android:progress="80"
-                    android:progressTint="#4CAF50" />
+                    android:progress="45"
+                    android:progressDrawable="@drawable/budget_progress_bg" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvBudgetUsed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Terpakai Rp 2.500.000"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/tvBudgetTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:gravity="end"
+                        android:text="dari Rp 3.000.000"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvBudgetPercentBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/budget_percent_badge_bg"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="45,4% terpakai"
+                    android:textColor="#262A24"
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/tvInfoBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="80% dari total Rp 5.000.000 sudah terpakai"
-                    android:textSize="12sp" />
+                    android:text="45% dari total budget sudah terpakai"
+                    android:visibility="gone" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Ubah Target Bulanan"
-                android:textStyle="bold"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/etTargetBudget"
+            <LinearLayout
+                android:id="@+id/cardBudgetStatus"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/rounded_edittext"
-                android:hint="Masukkan target baru (Rp)"
-                android:inputType="number"
-                android:padding="16dp" />
+                android:layout_height="94dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="-24dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/pengeluaran_chart_card_bg"
+                android:elevation="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
-            <Button
-                android:id="@+id/btnUpdateBudget"
+                <FrameLayout
+                    android:id="@+id/budgetStatusIconContainer"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/budget_status_icon_danger_bg">
+
+                    <ImageView
+                        android:id="@+id/ivBudgetStatusIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_cancel_budget" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvBudgetStatusTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:maxLines="1"
+                        android:text="Pengeluaran melebihi budget"
+                        android:textColor="#262A24"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvBudgetStatusDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/plus_jakarta_sans_regular"
+                        android:lineSpacingExtra="1dp"
+                        android:maxLines="2"
+                        android:text="Kamu sudah melewati batas budget bulan ini. Tinjau pengeluaranmu."
+                        android:textColor="#262A24"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cardEditBudget"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="16dp"
-                android:text="Simpan Budget Baru"
-                android:backgroundTint="#4CAF50"
-                app:cornerRadius="12dp" />
+                android:layout_height="220dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/pengeluaran_chart_card_bg"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:visibility="gone">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans_semibold"
+                    android:text="Edit Budget Perbulan"
+                    android:textColor="#262A24"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/plus_jakarta_sans_regular"
+                    android:text="Sesuaikan pengeluaran bulanan Kamu."
+                    android:textColor="#8A8F83"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etTargetBudget"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/input_note_bg"
+                    android:fontFamily="@font/plus_jakarta_sans_medium"
+                    android:hint="Rp 3.000.000"
+                    android:inputType="number"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#262A24"
+                    android:textColorHint="#8A8F83"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnCancelEditBudget"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/input_button_cancel_bg"
+                        android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:text="Batal"
+                        android:textAllCaps="false"
+                        android:textColor="#262A24"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btnUpdateBudget"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/input_button_add_bg"
+                        android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:text="Simpan"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -125,12 +307,12 @@
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/outline_add_24"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="#4CAF50"
         app:backgroundTint="#FDF5E6"
         app:fabCustomSize="64dp"
+        app:layout_anchor="@id/bottomAppBar"
         app:maxImageSize="32dp"
-        app:shapeAppearanceOverlay="@style/TombolBulatSempurna" />
+        app:shapeAppearanceOverlay="@style/TombolBulatSempurna"
+        app:srcCompat="@drawable/outline_add_24"
+        app:tint="#4CAF50" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

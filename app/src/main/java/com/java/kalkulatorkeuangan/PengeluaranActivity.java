@@ -1,11 +1,18 @@
 package com.java.kalkulatorkeuangan;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,28 +40,30 @@ public class PengeluaranActivity extends AppCompatActivity {
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     };
 
+    private DatabaseHelper dbHelper;
+    private TextView tvTotalPengeluaran;
+    private TextView tvPengeluaranMonth;
+    private LinearLayout containerKategori;
+    private ExpenseBarChartView expenseBarChart;
+    private Calendar selectedMonthCalendar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pengeluaran);
 
         // Inisialisasi View Utama
-        TextView tvTotalPengeluaran = findViewById(R.id.tvTotalPengeluaran);
-        TextView tvPengeluaranMonth = findViewById(R.id.tvPengeluaranMonth);
-        LinearLayout containerKategori = findViewById(R.id.containerKategori);
-        ExpenseBarChartView expenseBarChart = findViewById(R.id.expenseBarChart);
+        tvTotalPengeluaran = findViewById(R.id.tvTotalPengeluaran);
+        tvPengeluaranMonth = findViewById(R.id.tvPengeluaranMonth);
+        containerKategori = findViewById(R.id.containerKategori);
+        expenseBarChart = findViewById(R.id.expenseBarChart);
 
-        // Bersihkan container dulu buat jaga-jaga
-        containerKategori.removeAllViews();
+        dbHelper = new DatabaseHelper(this);
+        selectedMonthCalendar = Calendar.getInstance();
+        selectedMonthCalendar.set(Calendar.DAY_OF_MONTH, 1);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        double totalPengeluaranBulanIni = calculateCurrentMonthExpense(dbHelper);
-
-        // Set teks total pengeluaran header untuk bulan berjalan.
-        tvTotalPengeluaran.setText(formatRupiah(totalPengeluaranBulanIni));
-        tvPengeluaranMonth.setText(formatCurrentMonthLabel());
-        setupExpenseChart(dbHelper, expenseBarChart);
-        renderCurrentMonthCategoryBreakdown(dbHelper, containerKategori, totalPengeluaranBulanIni);
+        setupMonthSelector();
+        updatePengeluaranPage();
 
         // FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -67,6 +76,165 @@ public class PengeluaranActivity extends AppCompatActivity {
         });
 
         setupCustomBottomNavigation();
+    }
+
+    private void updatePengeluaranPage() {
+        containerKategori.removeAllViews();
+
+        double totalPengeluaranBulanTerpilih = calculateMonthlyExpense(dbHelper, selectedMonthCalendar);
+
+        tvTotalPengeluaran.setText(formatRupiah(totalPengeluaranBulanTerpilih));
+        tvPengeluaranMonth.setText(formatMonthLabel(selectedMonthCalendar));
+        setupExpenseChart(dbHelper, expenseBarChart, selectedMonthCalendar);
+        renderCategoryBreakdown(
+                dbHelper,
+                containerKategori,
+                totalPengeluaranBulanTerpilih,
+                selectedMonthCalendar
+        );
+    }
+
+    private void setupMonthSelector() {
+        findViewById(R.id.chipPengeluaranMonth).setOnClickListener(v -> showMonthYearPickerDialog());
+    }
+
+    private void showMonthYearPickerDialog() {
+        int[] temporaryMonth = {selectedMonthCalendar.get(Calendar.MONTH)};
+        int[] temporaryYear = {selectedMonthCalendar.get(Calendar.YEAR)};
+        Dialog dialog = new Dialog(this);
+        dialog.setCanceledOnTouchOutside(true);
+
+        FrameLayout dialogContent = new FrameLayout(this);
+        dialogContent.setMinimumWidth(dp(328));
+        dialogContent.setMinimumHeight(dp(260));
+        dialogContent.setBackground(createRoundedBackground("#FFFFFF", 16));
+        dialogContent.setElevation(dp(8));
+
+        TextView previousYearButton = createYearArrowButton("<");
+        TextView yearText = new TextView(this);
+        yearText.setText(String.valueOf(temporaryYear[0]));
+        yearText.setTextColor(Color.parseColor("#306D29"));
+        yearText.setTextSize(16);
+        yearText.setGravity(Gravity.CENTER);
+        yearText.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+
+        TextView nextYearButton = createYearArrowButton(">");
+
+        FrameLayout.LayoutParams previousYearParams = new FrameLayout.LayoutParams(dp(32), dp(40));
+        previousYearParams.gravity = Gravity.TOP | Gravity.START;
+        previousYearParams.setMargins(dp(16), dp(16), 0, 0);
+        dialogContent.addView(previousYearButton, previousYearParams);
+
+        FrameLayout.LayoutParams yearTextParams = new FrameLayout.LayoutParams(dp(96), dp(40));
+        yearTextParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        yearTextParams.setMargins(0, dp(16), 0, 0);
+        dialogContent.addView(yearText, yearTextParams);
+
+        FrameLayout.LayoutParams nextYearParams = new FrameLayout.LayoutParams(dp(32), dp(40));
+        nextYearParams.gravity = Gravity.TOP | Gravity.END;
+        nextYearParams.setMargins(0, dp(16), dp(16), 0);
+        dialogContent.addView(nextYearButton, nextYearParams);
+
+        GridLayout monthGrid = new GridLayout(this);
+        monthGrid.setColumnCount(3);
+
+        TextView[] monthButtons = new TextView[MONTH_NAMES.length];
+        for (int i = 0; i < MONTH_NAMES.length; i++) {
+            int monthIndex = i;
+            TextView monthButton = createMonthButton(getShortMonthName(i));
+            monthButton.setOnClickListener(v -> {
+                temporaryMonth[0] = monthIndex;
+                updateMonthButtonStates(monthButtons, temporaryMonth[0]);
+                selectedMonthCalendar.set(Calendar.YEAR, temporaryYear[0]);
+                selectedMonthCalendar.set(Calendar.MONTH, temporaryMonth[0]);
+                selectedMonthCalendar.set(Calendar.DAY_OF_MONTH, 1);
+                updatePengeluaranPage();
+                dialog.dismiss();
+            });
+
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = dp(80);
+            params.height = dp(40);
+            params.setMargins(dp(4), dp(4), dp(4), dp(4));
+            monthGrid.addView(monthButton, params);
+            monthButtons[i] = monthButton;
+        }
+        updateMonthButtonStates(monthButtons, temporaryMonth[0]);
+
+        FrameLayout.LayoutParams monthGridParams = new FrameLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        monthGridParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        monthGridParams.setMargins(0, dp(60), 0, 0);
+        dialogContent.addView(monthGrid, monthGridParams);
+
+        dialog.setContentView(dialogContent);
+
+        previousYearButton.setOnClickListener(v -> {
+            temporaryYear[0]--;
+            yearText.setText(String.valueOf(temporaryYear[0]));
+        });
+        nextYearButton.setOnClickListener(v -> {
+            temporaryYear[0]++;
+            yearText.setText(String.valueOf(temporaryYear[0]));
+        });
+
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(dp(328), dp(260));
+        }
+    }
+
+    private TextView createYearArrowButton(String text) {
+        TextView button = new TextView(this);
+        button.setText(text);
+        button.setTextColor(Color.parseColor("#262A24"));
+        button.setTextSize(10);
+        button.setGravity(Gravity.CENTER);
+        button.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        button.setBackground(createRoundedStrokeBackground("#FFFFFF", "#EDEDE8", 6));
+        button.setClickable(true);
+        button.setFocusable(true);
+        button.setLayoutParams(new LinearLayout.LayoutParams(dp(32), dp(40)));
+        return button;
+    }
+
+    private TextView createMonthButton(String text) {
+        TextView button = new TextView(this);
+        button.setText(text);
+        button.setTextSize(12);
+        button.setGravity(Gravity.CENTER);
+        button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+        button.setClickable(true);
+        button.setFocusable(true);
+        return button;
+    }
+
+    private void updateMonthButtonStates(TextView[] monthButtons, int selectedMonth) {
+        for (int i = 0; i < monthButtons.length; i++) {
+            boolean isSelected = i == selectedMonth;
+            monthButtons[i].setTextColor(Color.parseColor(isSelected ? "#FFFFFF" : "#262A24"));
+            monthButtons[i].setBackground(createRoundedBackground(isSelected ? "#306D29" : "#FFFFFF", 6));
+        }
+    }
+
+    private GradientDrawable createRoundedBackground(String colorHex, int radiusDp) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(Color.parseColor(colorHex));
+        drawable.setCornerRadius(dp(radiusDp));
+        return drawable;
+    }
+
+    private GradientDrawable createRoundedStrokeBackground(String fillColorHex, String strokeColorHex, int radiusDp) {
+        GradientDrawable drawable = createRoundedBackground(fillColorHex, radiusDp);
+        drawable.setStroke(dp(1), Color.parseColor(strokeColorHex));
+        return drawable;
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     private void setupCustomBottomNavigation() {
@@ -93,15 +261,13 @@ public class PengeluaranActivity extends AppCompatActivity {
         finish();
     }
 
-    private double calculateCurrentMonthExpense(DatabaseHelper dbHelper) {
+    private double calculateMonthlyExpense(DatabaseHelper dbHelper, Calendar targetMonthCalendar) {
         double total = 0;
         Cursor cursor = dbHelper.getAllTransactions();
 
         if (cursor == null) {
             return total;
         }
-
-        Calendar currentCalendar = Calendar.getInstance();
 
         try {
             int typeIndex = cursor.getColumnIndex("type");
@@ -116,7 +282,7 @@ public class PengeluaranActivity extends AppCompatActivity {
                 String type = cursor.getString(typeIndex);
                 String dateText = cursor.getString(dateIndex);
 
-                if ("Pengeluaran".equals(type) && isCurrentMonthDate(dateText, currentCalendar)) {
+                if ("Pengeluaran".equals(type) && isSameMonthYear(dateText, targetMonthCalendar)) {
                     total += cursor.getDouble(amountIndex);
                 }
             }
@@ -127,18 +293,23 @@ public class PengeluaranActivity extends AppCompatActivity {
         return total;
     }
 
-    private void setupExpenseChart(DatabaseHelper dbHelper, ExpenseBarChartView expenseBarChart) {
-        ChartData chartData = calculateLastSixMonthExpenses(dbHelper);
+    private void setupExpenseChart(
+            DatabaseHelper dbHelper,
+            ExpenseBarChartView expenseBarChart,
+            Calendar selectedMonthCalendar
+    ) {
+        ChartData chartData = calculateLastSixMonthExpenses(dbHelper, selectedMonthCalendar);
         expenseBarChart.setData(chartData.monthLabels, chartData.monthlyTotals, 5, chartData.averageValue);
     }
 
-    private ChartData calculateLastSixMonthExpenses(DatabaseHelper dbHelper) {
+    private ChartData calculateLastSixMonthExpenses(DatabaseHelper dbHelper, Calendar selectedMonthCalendar) {
         String[] monthLabels = new String[6];
         double[] monthlyTotals = new double[6];
         int[] monthValues = new int[6];
         int[] yearValues = new int[6];
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = (Calendar) selectedMonthCalendar.clone();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.add(Calendar.MONTH, -5);
 
         for (int i = 0; i < 6; i++) {
@@ -189,12 +360,13 @@ public class PengeluaranActivity extends AppCompatActivity {
         return new ChartData(monthLabels, monthlyTotals, total / 6d);
     }
 
-    private void renderCurrentMonthCategoryBreakdown(
+    private void renderCategoryBreakdown(
             DatabaseHelper dbHelper,
             LinearLayout containerKategori,
-            double totalPengeluaranBulanIni
+            double totalPengeluaranBulanTerpilih,
+            Calendar targetMonthCalendar
     ) {
-        List<CategorySummary> summaries = getCurrentMonthCategorySummaries(dbHelper);
+        List<CategorySummary> summaries = getCategorySummaries(dbHelper, targetMonthCalendar);
         LayoutInflater inflater = LayoutInflater.from(this);
 
         if (summaries.isEmpty()) {
@@ -210,8 +382,8 @@ public class PengeluaranActivity extends AppCompatActivity {
 
         for (CategorySummary summary : summaries) {
             double percentage = 0;
-            if (totalPengeluaranBulanIni > 0) {
-                percentage = (summary.total / totalPengeluaranBulanIni) * 100;
+            if (totalPengeluaranBulanTerpilih > 0) {
+                percentage = (summary.total / totalPengeluaranBulanTerpilih) * 100;
             }
 
             View itemView = inflater.inflate(R.layout.item_analisis, containerKategori, false);
@@ -232,15 +404,13 @@ public class PengeluaranActivity extends AppCompatActivity {
         }
     }
 
-    private List<CategorySummary> getCurrentMonthCategorySummaries(DatabaseHelper dbHelper) {
+    private List<CategorySummary> getCategorySummaries(DatabaseHelper dbHelper, Calendar targetMonthCalendar) {
         Map<String, Double> categoryTotals = new HashMap<>();
         Cursor cursor = dbHelper.getAllTransactions();
 
         if (cursor == null) {
             return new ArrayList<>();
         }
-
-        Calendar currentCalendar = Calendar.getInstance();
 
         try {
             int typeIndex = cursor.getColumnIndex("type");
@@ -256,7 +426,7 @@ public class PengeluaranActivity extends AppCompatActivity {
                 String type = cursor.getString(typeIndex);
                 String dateText = cursor.getString(dateIndex);
 
-                if (!"Pengeluaran".equals(type) || !isCurrentMonthDate(dateText, currentCalendar)) {
+                if (!"Pengeluaran".equals(type) || !isSameMonthYear(dateText, targetMonthCalendar)) {
                     continue;
                 }
 
@@ -288,13 +458,10 @@ public class PengeluaranActivity extends AppCompatActivity {
         return summaries;
     }
 
-    private boolean isCurrentMonthDate(String dateText, Calendar currentCalendar) {
+    private boolean isSameMonthYear(String dateText, Calendar targetMonthCalendar) {
         if (dateText == null || dateText.trim().isEmpty()) {
             return false;
         }
-
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
-        dbDateFormat.setLenient(false);
 
         try {
             Calendar transactionCalendar = parseTransactionDate(dateText);
@@ -302,8 +469,8 @@ public class PengeluaranActivity extends AppCompatActivity {
                 return false;
             }
 
-            return transactionCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR)
-                    && transactionCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
+            return transactionCalendar.get(Calendar.YEAR) == targetMonthCalendar.get(Calendar.YEAR)
+                    && transactionCalendar.get(Calendar.MONTH) == targetMonthCalendar.get(Calendar.MONTH);
         } catch (Exception e) {
             return false;
         }
@@ -388,8 +555,7 @@ public class PengeluaranActivity extends AppCompatActivity {
         }
     }
 
-    private String formatCurrentMonthLabel() {
-        Calendar calendar = Calendar.getInstance();
+    private String formatMonthLabel(Calendar calendar) {
         int monthIndex = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
         return MONTH_NAMES[monthIndex] + " " + year;

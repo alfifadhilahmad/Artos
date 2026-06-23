@@ -46,13 +46,17 @@
                         android:textSize="14sp" />
 
                     <LinearLayout
+                        android:id="@+id/chipPengeluaranMonth"
                         android:layout_width="wrap_content"
-                        android:layout_height="20dp"
+                        android:layout_height="22dp"
                         android:background="@drawable/pengeluaran_month_chip_bg"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:paddingStart="7dp"
-                        android:paddingEnd="6dp">
+                        android:paddingStart="8dp"
+                        android:paddingEnd="7dp">
 
                         <TextView
                             android:id="@+id/tvPengeluaranMonth"
@@ -64,15 +68,13 @@
                             android:textColor="#306D29"
                             android:textSize="10sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="4dp"
-                            android:fontFamily="@font/plus_jakarta_sans_medium"
-                            android:gravity="center"
-                            android:text="▾"
-                            android:textColor="#306D29"
-                            android:textSize="10sp" />
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginStart="5dp"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_calendar_input" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -539,24 +541,30 @@
 
     <FrameLayout
         android:id="@+id/fabAdd"
-        android:layout_width="66dp"
-        android:layout_height="66dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_center_input_button"
+        android:layout_marginBottom="9dp"
         android:clickable="true"
         android:elevation="16dp"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:foreground="@drawable/fab_center_oval_ripple"
         android:translationZ="16dp">
 
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+        <FrameLayout
+            android:layout_width="66dp"
+            android:layout_height="66dp"
             android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_input" />
+            android:background="@drawable/bg_center_input_button">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_input" />
+        </FrameLayout>
     </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
