@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,9 +19,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class PengeluaranActivity extends AppCompatActivity {
 
@@ -44,48 +50,11 @@ public class PengeluaranActivity extends AppCompatActivity {
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         double totalPengeluaranBulanIni = calculateCurrentMonthExpense(dbHelper);
-        double totalPengeluaran = dbHelper.getTotalPengeluaran();
 
         // Set teks total pengeluaran header untuk bulan berjalan.
         tvTotalPengeluaran.setText(formatRupiah(totalPengeluaranBulanIni));
         tvPengeluaranMonth.setText(formatCurrentMonthLabel());
-
-        Cursor cursor = dbHelper.getExpenseAnalysis();
-
-        // Siapkan alat untuk "mencetak" XML item_analisis.xml
-        LayoutInflater inflater = LayoutInflater.from(this);
-
-        if (cursor.moveToFirst()) {
-            do {
-                String kategori = cursor.getString(0);
-                double totalKategori = cursor.getDouble(1);
-
-                // Cegah pembagian dengan nol biar aplikasi nggak crash
-                double persen = 0;
-                if (totalPengeluaran > 0) {
-                    persen = (totalKategori / totalPengeluaran) * 100;
-                }
-
-                // 1. "Cetak" layout item_analisis.xml menjadi objek View
-                View itemView = inflater.inflate(R.layout.item_analisis, containerKategori, false);
-
-                // 2. Cari elemen-elemen di DALAM cetakan tersebut
-                TextView tvNama = itemView.findViewById(R.id.tvNamaKategori);
-                TextView tvPersen = itemView.findViewById(R.id.tvPersenKategori);
-                ProgressBar pbKategori = itemView.findViewById(R.id.pbKategori);
-                TextView tvTotal = itemView.findViewById(R.id.tvTotalKategori);
-
-                // 3. Masukkan data dari database ke elemen-elemen tersebut
-                tvNama.setText(kategori);
-                tvPersen.setText(String.format("%.1f", persen) + "%");
-                pbKategori.setProgress((int) persen);
-                tvTotal.setText("Rp " + String.format("%.0f", totalKategori));
-
-                // 4. Tempelkan cetakan yang sudah diisi data ke dalam container utama di layar
-                containerKategori.addView(itemView);
-
-            } while (cursor.moveToNext());
-        }
+        renderCurrentMonthCategoryBreakdown(dbHelper, containerKategori, totalPengeluaranBulanIni);
 
         // FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -167,6 +136,104 @@ public class PengeluaranActivity extends AppCompatActivity {
         return total;
     }
 
+    private void renderCurrentMonthCategoryBreakdown(
+            DatabaseHelper dbHelper,
+            LinearLayout containerKategori,
+            double totalPengeluaranBulanIni
+    ) {
+        List<CategorySummary> summaries = getCurrentMonthCategorySummaries(dbHelper);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        if (summaries.isEmpty()) {
+            TextView emptyText = new TextView(this);
+            emptyText.setText("Belum ada pengeluaran bulan ini");
+            emptyText.setTextColor(0xFF8A8F83);
+            emptyText.setTextSize(12);
+            emptyText.setPadding(4, 8, 4, 8);
+            containerKategori.addView(emptyText);
+            return;
+        }
+
+        for (CategorySummary summary : summaries) {
+            double percentage = 0;
+            if (totalPengeluaranBulanIni > 0) {
+                percentage = (summary.total / totalPengeluaranBulanIni) * 100;
+            }
+
+            View itemView = inflater.inflate(R.layout.item_analisis, containerKategori, false);
+
+            ImageView ivKategoriIcon = itemView.findViewById(R.id.ivKategoriIcon);
+            TextView tvNama = itemView.findViewById(R.id.tvNamaKategori);
+            TextView tvPersen = itemView.findViewById(R.id.tvPersenKategori);
+            ProgressBar pbKategori = itemView.findViewById(R.id.pbKategori);
+            TextView tvTotal = itemView.findViewById(R.id.tvTotalKategori);
+
+            ivKategoriIcon.setImageResource(getCategoryIconRes(summary.category));
+            tvNama.setText(summary.category);
+            tvPersen.setText(formatPercentage(percentage));
+            pbKategori.setProgress((int) Math.round(percentage));
+            tvTotal.setText(formatRupiah(summary.total));
+
+            containerKategori.addView(itemView);
+        }
+    }
+
+    private List<CategorySummary> getCurrentMonthCategorySummaries(DatabaseHelper dbHelper) {
+        Map<String, Double> categoryTotals = new HashMap<>();
+        Cursor cursor = dbHelper.getAllTransactions();
+
+        if (cursor == null) {
+            return new ArrayList<>();
+        }
+
+        Calendar currentCalendar = Calendar.getInstance();
+
+        try {
+            int typeIndex = cursor.getColumnIndex("type");
+            int amountIndex = cursor.getColumnIndex("amount");
+            int categoryIndex = cursor.getColumnIndex("category");
+            int dateIndex = cursor.getColumnIndex("date");
+
+            if (typeIndex == -1 || amountIndex == -1 || categoryIndex == -1 || dateIndex == -1) {
+                return new ArrayList<>();
+            }
+
+            while (cursor.moveToNext()) {
+                String type = cursor.getString(typeIndex);
+                String dateText = cursor.getString(dateIndex);
+
+                if (!"Pengeluaran".equals(type) || !isCurrentMonthDate(dateText, currentCalendar)) {
+                    continue;
+                }
+
+                String category = normalizeCategory(cursor.getString(categoryIndex));
+                double amount = cursor.getDouble(amountIndex);
+                Double currentTotal = categoryTotals.get(category);
+                if (currentTotal == null) {
+                    currentTotal = 0.0;
+                }
+                categoryTotals.put(category, currentTotal + amount);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        List<CategorySummary> summaries = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+            summaries.add(new CategorySummary(entry.getKey(), entry.getValue()));
+        }
+
+        Collections.sort(summaries, (first, second) -> {
+            int totalComparison = Double.compare(second.total, first.total);
+            if (totalComparison != 0) {
+                return totalComparison;
+            }
+            return first.category.compareToIgnoreCase(second.category);
+        });
+
+        return summaries;
+    }
+
     private boolean isCurrentMonthDate(String dateText, Calendar currentCalendar) {
         if (dateText == null || dateText.trim().isEmpty()) {
             return false;
@@ -194,10 +261,70 @@ public class PengeluaranActivity extends AppCompatActivity {
         return "Rp " + numberFormat.format(amount);
     }
 
+    private String formatPercentage(double percentage) {
+        if (percentage <= 0) {
+            return "0%";
+        }
+
+        long rounded = Math.round(percentage);
+        if (percentage >= 1 && Math.abs(percentage - rounded) < 0.05) {
+            return rounded + "%";
+        }
+
+        return String.format(Locale.US, "%.1f%%", percentage);
+    }
+
+    private String normalizeCategory(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            return "Lainnya";
+        }
+        return category.trim();
+    }
+
+    private int getCategoryIconRes(String category) {
+        String normalizedCategory = normalizeCategory(category);
+
+        switch (normalizedCategory) {
+            case "Makanan":
+                return R.drawable.ic_category_food_active;
+            case "Camilan":
+                return R.drawable.ic_category_snack_active;
+            case "Belanja":
+                return R.drawable.ic_category_shopping_active;
+            case "Tagihan":
+                return R.drawable.ic_category_bill_active;
+            case "Kesehatan":
+                return R.drawable.ic_category_health_active;
+            case "Edukasi":
+                return R.drawable.ic_category_education_active;
+            case "Hiburan":
+                return R.drawable.ic_category_entertainment_active;
+            case "Tabungan":
+                return R.drawable.ic_category_savings_active;
+            case "Sewa Kos":
+                return R.drawable.ic_category_house_active;
+            case "Pemasukan":
+                return R.drawable.ic_category_income_active;
+            case "Lainnya":
+            default:
+                return R.drawable.ic_category_other_active;
+        }
+    }
+
     private String formatCurrentMonthLabel() {
         Calendar calendar = Calendar.getInstance();
         int monthIndex = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
         return MONTH_NAMES[monthIndex] + " " + year;
+    }
+
+    private static class CategorySummary {
+        private final String category;
+        private final double total;
+
+        private CategorySummary(String category, double total) {
+            this.category = category;
+            this.total = total;
+        }
     }
 }
