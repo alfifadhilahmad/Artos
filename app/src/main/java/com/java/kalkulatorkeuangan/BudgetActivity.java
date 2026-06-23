@@ -1,12 +1,18 @@
 package com.java.kalkulatorkeuangan;
 
 import android.content.Intent;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
 import android.content.SharedPreferences;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -16,9 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -41,6 +44,9 @@ public class BudgetActivity extends AppCompatActivity {
     private ImageView ivBudgetStatusIcon;
     private FrameLayout budgetStatusIconContainer;
     private ProgressBar progressBudget;
+    private View cardEditBudget;
+    private EditText etTargetBudget;
+    private boolean isFormattingBudgetInput = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +63,13 @@ public class BudgetActivity extends AppCompatActivity {
 
         // 1. PASTIKAN NAMA LAYOUT SESUAI
         setContentView(R.layout.activity_budget);
-        EditText etTargetBudget =
-                findViewById(R.id.etTargetBudget);
-
-        Button btnUpdateBudget =
-                findViewById(R.id.btnUpdateBudget);
+        etTargetBudget = findViewById(R.id.etTargetBudget);
+        Button btnUpdateBudget = findViewById(R.id.btnUpdateBudget);
+        Button btnCancelEditBudget = findViewById(R.id.btnCancelEditBudget);
 
         tvSisaBudget = findViewById(R.id.tvSisaBudget);
         tvInfoBudget = findViewById(R.id.tvInfoBudget);
+        TextView tvBudgetEdit = findViewById(R.id.tvBudgetEdit);
         tvBudgetUsed = findViewById(R.id.tvBudgetUsed);
         tvBudgetTotal = findViewById(R.id.tvBudgetTotal);
         tvBudgetPercentBadge = findViewById(R.id.tvBudgetPercentBadge);
@@ -73,88 +78,160 @@ public class BudgetActivity extends AppCompatActivity {
         ivBudgetStatusIcon = findViewById(R.id.ivBudgetStatusIcon);
         budgetStatusIconContainer = findViewById(R.id.budgetStatusIconContainer);
         progressBudget = findViewById(R.id.progressBudget);
+        cardEditBudget = findViewById(R.id.cardEditBudget);
 
         dbHelper = new DatabaseHelper(this);
         budgetPrefs = getSharedPreferences("BudgetPrefs", MODE_PRIVATE);
 
+        setupEditBudgetCard(tvBudgetEdit, btnUpdateBudget, btnCancelEditBudget);
         updateBudgetData();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        setupCustomBottomNavigation();
 
-        // 2. NYALAKAN IKON SESUAI HALAMAN SAAT INI
-        bottomNavigationView.setSelectedItemId(R.id.nav_budget);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_pengeluaran) {
-                startActivity(new Intent(getApplicationContext(), PengeluaranActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_budget) {
-                // 3. KALAU KLIK BUDGET PADAHAL LAGI DI BUDGET, DIAM SAJA
-                return true;
-            } else if (itemId == R.id.nav_riwayat) {
-                startActivity(new Intent(getApplicationContext(), RiwayatActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            }
-            return false;
-        });
-
-        // Logika untuk tombol "+"
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
-        fabAdd.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class));
-        });
-
-        btnUpdateBudget.setOnClickListener(v -> {
-
-            String input =
-                    etTargetBudget.getText().toString();
-
-            if(input.isEmpty()){
-
-                Toast.makeText(
-                        this,
-                        "Masukkan budget dulu",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                return;
-            }
-
-            float budgetBaru =
-                    Float.parseFloat(input);
-
-            SharedPreferences.Editor editor =
-                    budgetPrefs.edit();
-
-            editor.putFloat(
-                    "budget",
-                    budgetBaru
-            );
-
-            editor.apply();
-
-            Toast.makeText(
-                    this,
-                    "Budget berhasil disimpan",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-            recreate();
-        });
     }
 
     // FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME
+
+    private void setupEditBudgetCard(TextView tvBudgetEdit, Button btnUpdateBudget, Button btnCancelEditBudget) {
+        cardEditBudget.setVisibility(View.GONE);
+        setupBudgetInputFormatter();
+        tvBudgetEdit.setPaintFlags(tvBudgetEdit.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        tvBudgetEdit.setOnClickListener(v -> showEditBudgetCard());
+        btnCancelEditBudget.setOnClickListener(v -> hideEditBudgetCard(false));
+        btnUpdateBudget.setOnClickListener(v -> saveBudgetFromInput());
+    }
+
+    private void setupCustomBottomNavigation() {
+        findViewById(R.id.navHomeButton).setOnClickListener(v ->
+                openBottomNavActivity(HomeActivity.class));
+
+        findViewById(R.id.navPengeluaranButton).setOnClickListener(v ->
+                openBottomNavActivity(PengeluaranActivity.class));
+
+        findViewById(R.id.navBudgetButton).setOnClickListener(v -> {
+            // Already on Budget.
+        });
+
+        findViewById(R.id.navRiwayatButton).setOnClickListener(v ->
+                openBottomNavActivity(RiwayatActivity.class));
+
+        findViewById(R.id.fabAdd).setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class)));
+    }
+
+    private void openBottomNavActivity(Class<?> destinationActivity) {
+        startActivity(new Intent(getApplicationContext(), destinationActivity));
+        overridePendingTransition(0, 0);
+        finish();
+    }
+
+    private void showEditBudgetCard() {
+        float currentBudget = budgetPrefs.getFloat("budget", 5000000);
+        etTargetBudget.setText(formatPlainNumber(currentBudget));
+        etTargetBudget.setSelection(etTargetBudget.getText().length());
+        cardEditBudget.setVisibility(View.VISIBLE);
+    }
+
+    private void hideEditBudgetCard(boolean resetInput) {
+        if (resetInput) {
+            etTargetBudget.setText("");
+        } else {
+            float currentBudget = budgetPrefs.getFloat("budget", 5000000);
+            etTargetBudget.setText(formatPlainNumber(currentBudget));
+        }
+        etTargetBudget.clearFocus();
+        hideKeyboard();
+        cardEditBudget.setVisibility(View.GONE);
+    }
+
+    private void saveBudgetFromInput() {
+        Float parsedBudget = parseBudgetInput(etTargetBudget.getText().toString());
+
+        if (parsedBudget == null || parsedBudget <= 0) {
+            Toast.makeText(this, "Masukkan budget yang valid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        budgetPrefs.edit()
+                .putFloat("budget", parsedBudget)
+                .apply();
+
+        updateBudgetData();
+        hideEditBudgetCard(true);
+        Toast.makeText(this, "Budget berhasil diperbarui", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupBudgetInputFormatter() {
+        etTargetBudget.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (isFormattingBudgetInput) {
+                    return;
+                }
+
+                String digitsOnly = editable.toString().replaceAll("[^0-9]", "");
+                if (digitsOnly.isEmpty()) {
+                    return;
+                }
+
+                try {
+                    long amount = Long.parseLong(digitsOnly);
+                    String formatted = formatPlainNumber(amount);
+                    if (!formatted.equals(editable.toString())) {
+                        isFormattingBudgetInput = true;
+                        etTargetBudget.setText(formatted);
+                        etTargetBudget.setSelection(formatted.length());
+                        isFormattingBudgetInput = false;
+                    }
+                } catch (NumberFormatException e) {
+                    isFormattingBudgetInput = true;
+                    etTargetBudget.setText("");
+                    isFormattingBudgetInput = false;
+                }
+            }
+        });
+    }
+
+    private Float parseBudgetInput(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        String digitsOnly = input.replaceAll("[^0-9]", "");
+        if (digitsOnly.isEmpty()) {
+            return null;
+        }
+
+        try {
+            return Float.parseFloat(digitsOnly);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private String formatPlainNumber(double amount) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+        numberFormat.setMaximumFractionDigits(0);
+        numberFormat.setMinimumFractionDigits(0);
+        return numberFormat.format(Math.abs(amount));
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(etTargetBudget.getWindowToken(), 0);
+        }
+    }
 
     private void updateBudgetData() {
         double totalBudget = budgetPrefs.getFloat("budget", 5000000);

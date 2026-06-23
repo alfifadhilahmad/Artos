@@ -46,24 +46,21 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="64dp"
+                        android:layout_height="44dp"
+                        android:gravity="end"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tvBudgetEdit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
                             android:fontFamily="@font/plus_jakarta_sans_medium"
+                            android:gravity="end|center_vertical"
+                            android:includeFontPadding="false"
                             android:text="Edit"
                             android:textColor="#FFFFFF"
                             android:textSize="12sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="1dp"
-                            android:background="#FFFFFF" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -203,14 +200,17 @@
             <LinearLayout
                 android:id="@+id/cardEditBudget"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="236dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/pengeluaran_chart_card_bg"
                 android:elevation="4dp"
                 android:orientation="vertical"
-                android:padding="18dp"
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="20dp"
                 android:visibility="gone">
 
                 <TextView
@@ -258,11 +258,21 @@
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         android:background="@drawable/input_button_cancel_bg"
+                        android:backgroundTint="#EDEDE8"
                         android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:gravity="center"
+                        android:includeFontPadding="true"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="0dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="0dp"
+                        android:paddingBottom="2dp"
                         android:text="Batal"
                         android:textAllCaps="false"
                         android:textColor="#262A24"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        app:backgroundTint="#EDEDE8" />
 
                     <Button
                         android:id="@+id/btnUpdateBudget"
@@ -271,48 +281,180 @@
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:background="@drawable/input_button_add_bg"
+                        android:backgroundTint="#306D29"
                         android:fontFamily="@font/plus_jakarta_sans_semibold"
+                        android:gravity="center"
+                        android:includeFontPadding="true"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="0dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="0dp"
+                        android:paddingBottom="2dp"
                         android:text="Simpan"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        app:backgroundTint="#306D29" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+    <LinearLayout
+        android:id="@+id/customBottomNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74dp"
         android:layout_gravity="bottom"
-        app:backgroundTint="#FFFFFF"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="8dp"
-        app:fabCradleRoundedCornerRadius="24dp"
-        app:fabCradleVerticalOffset="0dp"
-        app:paddingBottomSystemWindowInsets="false">
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
-    </com.google.android.material.bottomappbar.BottomAppBar>
+        <LinearLayout
+            android:id="@+id/navHomeButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_home_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:text="Beranda"
+                android:textColor="#262A24"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navPengeluaranButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.15"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_expenditure_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:singleLine="true"
+                android:text="Pengeluaran"
+                android:textColor="#262A24"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="74dp"
+            android:layout_height="1dp" />
+
+        <LinearLayout
+            android:id="@+id/navBudgetButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_budget_active" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="Budget"
+                android:textColor="#306D29"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navRiwayatButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_history_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:text="Riwayat"
+                android:textColor="#262A24"
+                android:textSize="9sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
         android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:backgroundTint="#FDF5E6"
-        app:fabCustomSize="64dp"
-        app:layout_anchor="@id/bottomAppBar"
-        app:maxImageSize="32dp"
-        app:shapeAppearanceOverlay="@style/TombolBulatSempurna"
-        app:srcCompat="@drawable/outline_add_24"
-        app:tint="#4CAF50" />
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="9dp"
+        android:clickable="true"
+        android:elevation="16dp"
+        android:focusable="true"
+        android:foreground="@drawable/fab_center_oval_ripple"
+        android:translationZ="16dp">
+
+        <FrameLayout
+            android:layout_width="66dp"
+            android:layout_height="66dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_center_input_button">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_input" />
+        </FrameLayout>
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
