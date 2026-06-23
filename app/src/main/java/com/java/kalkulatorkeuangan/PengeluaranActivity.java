@@ -44,6 +44,7 @@ public class PengeluaranActivity extends AppCompatActivity {
         TextView tvTotalPengeluaran = findViewById(R.id.tvTotalPengeluaran);
         TextView tvPengeluaranMonth = findViewById(R.id.tvPengeluaranMonth);
         LinearLayout containerKategori = findViewById(R.id.containerKategori);
+        ExpenseBarChartView expenseBarChart = findViewById(R.id.expenseBarChart);
 
         // Bersihkan container dulu buat jaga-jaga
         containerKategori.removeAllViews();
@@ -54,6 +55,7 @@ public class PengeluaranActivity extends AppCompatActivity {
         // Set teks total pengeluaran header untuk bulan berjalan.
         tvTotalPengeluaran.setText(formatRupiah(totalPengeluaranBulanIni));
         tvPengeluaranMonth.setText(formatCurrentMonthLabel());
+        setupExpenseChart(dbHelper, expenseBarChart);
         renderCurrentMonthCategoryBreakdown(dbHelper, containerKategori, totalPengeluaranBulanIni);
 
         // FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME
@@ -136,6 +138,68 @@ public class PengeluaranActivity extends AppCompatActivity {
         return total;
     }
 
+    private void setupExpenseChart(DatabaseHelper dbHelper, ExpenseBarChartView expenseBarChart) {
+        ChartData chartData = calculateLastSixMonthExpenses(dbHelper);
+        expenseBarChart.setData(chartData.monthLabels, chartData.monthlyTotals, 5, chartData.averageValue);
+    }
+
+    private ChartData calculateLastSixMonthExpenses(DatabaseHelper dbHelper) {
+        String[] monthLabels = new String[6];
+        double[] monthlyTotals = new double[6];
+        int[] monthValues = new int[6];
+        int[] yearValues = new int[6];
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -5);
+
+        for (int i = 0; i < 6; i++) {
+            monthValues[i] = calendar.get(Calendar.MONTH);
+            yearValues[i] = calendar.get(Calendar.YEAR);
+            monthLabels[i] = getShortMonthName(monthValues[i]) + " " + String.format(Locale.US, "%02d", yearValues[i] % 100);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        Cursor cursor = dbHelper.getAllTransactions();
+        if (cursor != null) {
+            try {
+                int typeIndex = cursor.getColumnIndex("type");
+                int amountIndex = cursor.getColumnIndex("amount");
+                int dateIndex = cursor.getColumnIndex("date");
+
+                if (typeIndex != -1 && amountIndex != -1 && dateIndex != -1) {
+                    while (cursor.moveToNext()) {
+                        String type = cursor.getString(typeIndex);
+                        if (!"Pengeluaran".equals(type)) {
+                            continue;
+                        }
+
+                        Calendar transactionCalendar = parseTransactionDate(cursor.getString(dateIndex));
+                        if (transactionCalendar == null) {
+                            continue;
+                        }
+
+                        for (int i = 0; i < 6; i++) {
+                            if (transactionCalendar.get(Calendar.YEAR) == yearValues[i]
+                                    && transactionCalendar.get(Calendar.MONTH) == monthValues[i]) {
+                                monthlyTotals[i] += cursor.getDouble(amountIndex);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        double total = 0;
+        for (double monthlyTotal : monthlyTotals) {
+            total += monthlyTotal;
+        }
+
+        return new ChartData(monthLabels, monthlyTotals, total / 6d);
+    }
+
     private void renderCurrentMonthCategoryBreakdown(
             DatabaseHelper dbHelper,
             LinearLayout containerKategori,
@@ -172,7 +236,7 @@ public class PengeluaranActivity extends AppCompatActivity {
             tvNama.setText(summary.category);
             tvPersen.setText(formatPercentage(percentage));
             pbKategori.setProgress((int) Math.round(percentage));
-            tvTotal.setText(formatRupiah(summary.total));
+            tvTotal.setText(formatExpenseRupiah(summary.total));
 
             containerKategori.addView(itemView);
         }
@@ -243,14 +307,33 @@ public class PengeluaranActivity extends AppCompatActivity {
         dbDateFormat.setLenient(false);
 
         try {
-            Date parsedDate = dbDateFormat.parse(dateText.trim());
-            Calendar transactionCalendar = Calendar.getInstance();
-            transactionCalendar.setTime(parsedDate);
+            Calendar transactionCalendar = parseTransactionDate(dateText);
+            if (transactionCalendar == null) {
+                return false;
+            }
 
             return transactionCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR)
                     && transactionCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return false;
+        }
+    }
+
+    private Calendar parseTransactionDate(String dateText) {
+        if (dateText == null || dateText.trim().isEmpty()) {
+            return null;
+        }
+
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+        dbDateFormat.setLenient(false);
+
+        try {
+            Date parsedDate = dbDateFormat.parse(dateText.trim());
+            Calendar transactionCalendar = Calendar.getInstance();
+            transactionCalendar.setTime(parsedDate);
+            return transactionCalendar;
+        } catch (ParseException e) {
+            return null;
         }
     }
 
@@ -259,6 +342,10 @@ public class PengeluaranActivity extends AppCompatActivity {
         numberFormat.setMaximumFractionDigits(0);
         numberFormat.setMinimumFractionDigits(0);
         return "Rp " + numberFormat.format(amount);
+    }
+
+    private String formatExpenseRupiah(double amount) {
+        return "- " + formatRupiah(amount);
     }
 
     private String formatPercentage(double percentage) {
@@ -318,6 +405,36 @@ public class PengeluaranActivity extends AppCompatActivity {
         return MONTH_NAMES[monthIndex] + " " + year;
     }
 
+    private String getShortMonthName(int monthIndex) {
+        switch (monthIndex) {
+            case Calendar.JANUARY:
+                return "Jan";
+            case Calendar.FEBRUARY:
+                return "Feb";
+            case Calendar.MARCH:
+                return "Mar";
+            case Calendar.APRIL:
+                return "Apr";
+            case Calendar.MAY:
+                return "Mei";
+            case Calendar.JUNE:
+                return "Jun";
+            case Calendar.JULY:
+                return "Jul";
+            case Calendar.AUGUST:
+                return "Agu";
+            case Calendar.SEPTEMBER:
+                return "Sep";
+            case Calendar.OCTOBER:
+                return "Okt";
+            case Calendar.NOVEMBER:
+                return "Nov";
+            case Calendar.DECEMBER:
+            default:
+                return "Des";
+        }
+    }
+
     private static class CategorySummary {
         private final String category;
         private final double total;
@@ -325,6 +442,18 @@ public class PengeluaranActivity extends AppCompatActivity {
         private CategorySummary(String category, double total) {
             this.category = category;
             this.total = total;
+        }
+    }
+
+    private static class ChartData {
+        private final String[] monthLabels;
+        private final double[] monthlyTotals;
+        private final double averageValue;
+
+        private ChartData(String[] monthLabels, double[] monthlyTotals, double averageValue) {
+            this.monthLabels = monthLabels;
+            this.monthlyTotals = monthlyTotals;
+            this.averageValue = averageValue;
         }
     }
 }
