@@ -13,9 +13,6 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,40 +65,31 @@ public class PengeluaranActivity extends AppCompatActivity {
             }
         });
 
-        // ==========================================
-        // LOGIKA NAVIGASI BAWAH
-        // ==========================================
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_pengeluaran);
+        setupCustomBottomNavigation();
+    }
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
+    private void setupCustomBottomNavigation() {
+        findViewById(R.id.navHomeButton).setOnClickListener(v ->
+                openBottomNavActivity(HomeActivity.class));
 
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_pengeluaran) {
-                return true; // Diam saja
-            } else if (itemId == R.id.nav_budget) {
-                startActivity(new Intent(getApplicationContext(), BudgetActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_riwayat) {
-                startActivity(new Intent(getApplicationContext(), RiwayatActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            }
-            return false;
+        findViewById(R.id.navPengeluaranButton).setOnClickListener(v -> {
+            // Already on Pengeluaran.
         });
 
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
-        fabAdd.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class));
-        });
+        findViewById(R.id.navBudgetButton).setOnClickListener(v ->
+                openBottomNavActivity(BudgetActivity.class));
+
+        findViewById(R.id.navRiwayatButton).setOnClickListener(v ->
+                openBottomNavActivity(RiwayatActivity.class));
+
+        findViewById(R.id.fabAdd).setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), TambahTransaksiActivity.class)));
+    }
+
+    private void openBottomNavActivity(Class<?> destinationActivity) {
+        startActivity(new Intent(getApplicationContext(), destinationActivity));
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     private double calculateCurrentMonthExpense(DatabaseHelper dbHelper) {
