@@ -640,13 +640,20 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_home_active" />
+                android:src="@drawable/ic_home_active"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:includeFontPadding="false"
+                android:minHeight="12dp"
+                android:singleLine="true"
                 android:text="Beranda"
                 android:textColor="@color/home_primary_green"
                 android:textSize="9sp" />
@@ -667,17 +674,23 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_expenditure_inactive" />
+                android:src="@drawable/ic_expenditure_inactive"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:includeFontPadding="false"
+                android:minHeight="12dp"
                 android:singleLine="true"
                 android:text="Pengeluaran"
                 android:textColor="@color/home_text_primary"
-                android:textSize="8sp" />
+                android:textSize="9sp" />
         </LinearLayout>
 
         <Space
@@ -699,13 +712,20 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_budget_inactive" />
+                android:src="@drawable/ic_budget_inactive"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:includeFontPadding="false"
+                android:minHeight="12dp"
+                android:singleLine="true"
                 android:text="Budget"
                 android:textColor="@color/home_text_primary"
                 android:textSize="9sp" />
@@ -726,13 +746,20 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_history_inactive" />
+                android:src="@drawable/ic_history_inactive"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:includeFontPadding="false"
+                android:minHeight="12dp"
+                android:singleLine="true"
                 android:text="Riwayat"
                 android:textColor="@color/home_text_primary"
                 android:textSize="9sp" />
