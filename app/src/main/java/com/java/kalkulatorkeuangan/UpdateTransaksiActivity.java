@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,10 +68,12 @@ public class UpdateTransaksiActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroupTipe);
         radioPengeluaran = findViewById(R.id.radioPengeluaran);
         radioPemasukan = findViewById(R.id.radioPemasukan);
+        ScrollView inputScrollView = findViewById(R.id.inputScrollView);
         View btnHapus = findViewById(R.id.btnHapus);
         View btnSimpan = findViewById(R.id.btnSimpan);
 
         setupCategorySelector();
+        setupCatatanAutoScroll(inputScrollView);
 
         etNominal.addTextChangedListener(new TextWatcher() {
             @Override
@@ -116,6 +119,45 @@ public class UpdateTransaksiActivity extends AppCompatActivity {
         btnHapus.setOnClickListener(v -> showDeleteConfirmationDialog());
 
         btnSimpan.setOnClickListener(v -> saveTransactionChanges());
+    }
+
+    private void setupCatatanAutoScroll(ScrollView inputScrollView) {
+        etCatatan.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                scrollToCatatan(inputScrollView, etCatatan);
+            }
+        });
+        etCatatan.setOnClickListener(view -> scrollToCatatan(inputScrollView, etCatatan));
+        etCatatan.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (etCatatan.hasFocus()) {
+                    scrollToCatatan(inputScrollView, etCatatan);
+                }
+            }
+        });
+    }
+
+    private void scrollToCatatan(ScrollView inputScrollView, View catatanView) {
+        View noteContainer = (View) catatanView.getParent();
+        int scrollTarget = noteContainer.getBottom();
+
+        inputScrollView.postDelayed(
+                () -> inputScrollView.smoothScrollTo(0, scrollTarget),
+                250
+        );
+        inputScrollView.postDelayed(
+                () -> inputScrollView.smoothScrollTo(0, scrollTarget),
+                450
+        );
     }
 
     private void setupCategorySelector() {
