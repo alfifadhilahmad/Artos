@@ -1,97 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loginScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/login_background">
+    android:background="@color/login_background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="96dp">
 
-    <LinearLayout
-        android:id="@+id/loginContent"
-        android:layout_width="262dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        android:layout_marginTop="176dp">
+        android:minHeight="800dp">
 
-        <TextView
-            android:id="@+id/tvLoginTitle"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/loginContent"
+            android:layout_width="262dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Hello Again!"
-            android:textColor="@color/login_text"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="128dp">
 
-        <TextView
-            android:id="@+id/tvLoginSubtitle"
-            android:layout_width="242dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:lineSpacingExtra="2dp"
-            android:text="Welcome back, keep track of your finances"
-            android:textColor="@color/login_text"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tvLoginTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Halo!"
+                android:textColor="@color/login_text"
+                android:textSize="24sp" />
 
-        <EditText
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="52dp"
-            android:background="@drawable/login_input_background"
-            android:hint="Enter Username"
-            android:inputType="text"
-            android:paddingStart="18dp"
-            android:paddingEnd="18dp"
-            android:singleLine="true"
-            android:textColor="@color/login_text"
-            android:textColorHint="#7A7A74"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tvLoginSubtitle"
+                android:layout_width="242dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text="Selamat datang kembali, pantau keuangan Kamu"
+                android:textColor="@color/login_text"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/login_input_background"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:paddingStart="18dp"
-            android:paddingEnd="18dp"
-            android:singleLine="true"
-            android:textColor="@color/login_text"
-            android:textColorHint="#7A7A74"
-            android:textSize="12sp" />
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="64dp"
+                android:background="@drawable/login_input_background"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center_vertical"
+                android:hint="Masukkan Nama Pengguna"
+                android:inputType="text"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="@color/login_text"
+                android:textColorHint="#7A7A74"
+                android:textCursorDrawable="@null"
+                android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/tvRecoveryPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="end"
-            android:text="Recovery Password"
-            android:textColor="#000000"
-            android:textSize="12sp" />
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/login_input_background"
+                android:fontFamily="@font/plus_jakarta_sans_regular"
+                android:gravity="center_vertical"
+                android:hint="Kata Sandi"
+                android:inputType="textPassword"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="@color/login_text"
+                android:textColorHint="#7A7A74"
+                android:textCursorDrawable="@null"
+                android:textSize="12sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="48dp"
-            android:stateListAnimator="@null"
-            android:text="Sign In"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            app:backgroundTint="@color/login_button"
-            app:cornerRadius="12dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="64dp"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null"
+                android:text="Masuk"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:backgroundTint="@color/login_button"
+                app:cornerRadius="12dp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
