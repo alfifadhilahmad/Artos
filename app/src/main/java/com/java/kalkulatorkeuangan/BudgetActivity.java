@@ -90,6 +90,14 @@ public class BudgetActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (tvSisaBudget != null) {
+            updateBudgetData();
+        }
+    }
+
     // FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME
 
     private void setupEditBudgetCard(TextView tvBudgetEdit, Button btnUpdateBudget, Button btnCancelEditBudget) {

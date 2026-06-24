@@ -56,53 +56,7 @@ public class RiwayatActivity extends AppCompatActivity {
         rvRiwayat.setLayoutManager(
                 new LinearLayoutManager(this));
 
-        DatabaseHelper dbHelper =
-                new DatabaseHelper(this);
-
-        Cursor cursor =
-                dbHelper.getAllTransactions();
-        Toast.makeText(
-                this,
-                "Jumlah data: " + cursor.getCount(),
-                Toast.LENGTH_LONG
-        ).show();
-
-
-        while(cursor.moveToNext()){
-
-            int id =
-                    cursor.getInt(0);
-
-            String type =
-                    cursor.getString(1);
-
-            double amount =
-                    cursor.getDouble(2);
-
-            String category =
-                    cursor.getString(3);
-
-            String note =
-                    cursor.getString(4);
-
-            String date =
-                    cursor.getString(5);
-
-            allTransactions.add(
-                    new Transaction(
-                            id,
-                            type,
-                            amount,
-                            category,
-                            note,
-                            date
-                    )
-            );
-        }
-
-        cursor.close();
-
-        applyFiltersAndRender();
+        loadTransactions();
 
         etSearchRiwayat.addTextChangedListener(new TextWatcher() {
             @Override
@@ -135,12 +89,6 @@ public class RiwayatActivity extends AppCompatActivity {
         });
         setupFilterChips();
 
-        Toast.makeText(
-                this,
-                "List size: " + allTransactions.size(),
-                Toast.LENGTH_LONG
-        ).show();
-
         setupCustomBottomNavigation();
 
         // 5. FUNGSI TOMBOL BACK DI HP BIAR SELALU BALIK KE HOME (Cara Baru Anti-Coret)
@@ -152,6 +100,14 @@ public class RiwayatActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (rvRiwayat != null) {
+            loadTransactions();
+        }
     }
 
     private void setupCustomBottomNavigation() {
@@ -186,6 +142,7 @@ public class RiwayatActivity extends AppCompatActivity {
 
         TransactionAdapter adapter =
                 new TransactionAdapter(filteredTransactions);
+        adapter.setOnTransactionClickListener(this::openUpdateTransactionPage);
 
         rvRiwayat.setAdapter(adapter);
 
@@ -196,6 +153,60 @@ public class RiwayatActivity extends AppCompatActivity {
             tvRiwayatEmpty.setVisibility(View.GONE);
             rvRiwayat.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void loadTransactions() {
+        allTransactions.clear();
+
+        DatabaseHelper dbHelper =
+                new DatabaseHelper(this);
+
+        Cursor cursor =
+                dbHelper.getAllTransactions();
+
+        try {
+            while(cursor.moveToNext()){
+
+                int id =
+                        cursor.getInt(0);
+
+                String type =
+                        cursor.getString(1);
+
+                double amount =
+                        cursor.getDouble(2);
+
+                String category =
+                        cursor.getString(3);
+
+                String note =
+                        cursor.getString(4);
+
+                String date =
+                        cursor.getString(5);
+
+                allTransactions.add(
+                        new Transaction(
+                                id,
+                                type,
+                                amount,
+                                category,
+                                note,
+                                date
+                        )
+                );
+            }
+        } finally {
+            cursor.close();
+        }
+
+        applyFiltersAndRender();
+    }
+
+    private void openUpdateTransactionPage(Transaction transaction) {
+        Intent intent = new Intent(RiwayatActivity.this, UpdateTransaksiActivity.class);
+        intent.putExtra(UpdateTransaksiActivity.EXTRA_TRANSACTION_ID, transaction.getId());
+        startActivity(intent);
     }
 
     private void setupFilterChips() {

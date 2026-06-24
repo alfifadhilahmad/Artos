@@ -78,6 +78,14 @@ public class PengeluaranActivity extends AppCompatActivity {
         setupCustomBottomNavigation();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (tvTotalPengeluaran != null && selectedMonthCalendar != null) {
+            updatePengeluaranPage();
+        }
+    }
+
     private void updatePengeluaranPage() {
         containerKategori.removeAllViews();
 

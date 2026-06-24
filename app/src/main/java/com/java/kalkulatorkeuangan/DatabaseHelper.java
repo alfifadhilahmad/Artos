@@ -85,6 +85,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    public Cursor getTransactionById(int id) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        return db.rawQuery(
+                "SELECT * FROM transactions WHERE id = ?",
+                new String[]{String.valueOf(id)}
+        );
+    }
+
+    public boolean updateTransaction(
+            int id,
+            String type,
+            double amount,
+            String category,
+            String note,
+            String date) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("type", type);
+        values.put("amount", amount);
+        values.put("category", category);
+        values.put("note", note);
+        values.put("date", date);
+
+        int rowsUpdated = db.update(
+                "transactions",
+                values,
+                "id = ?",
+                new String[]{String.valueOf(id)}
+        );
+
+        return rowsUpdated > 0;
+    }
+
+    public boolean deleteTransaction(int id) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int rowsDeleted = db.delete(
+                "transactions",
+                "id = ?",
+                new String[]{String.valueOf(id)}
+        );
+
+        return rowsDeleted > 0;
+    }
+
     public double getTotalPemasukan() {
 
         SQLiteDatabase db = this.getReadableDatabase();

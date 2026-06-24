@@ -22,9 +22,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_TRANSACTION = 1;
 
     private final List<RiwayatListItem> riwayatListItems = new ArrayList<>();
+    private OnTransactionClickListener onTransactionClickListener;
+
+    public interface OnTransactionClickListener {
+        void onTransactionClick(Transaction transaction);
+    }
 
     public TransactionAdapter(List<Transaction> transactionList) {
         buildGroupedItems(transactionList);
+    }
+
+    public void setOnTransactionClickListener(OnTransactionClickListener listener) {
+        this.onTransactionClickListener = listener;
     }
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -109,6 +118,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         transactionHolder.tvAmount.setTextColor(
                 isIncome ? 0xFF306D29 : 0xFFB3261E
         );
+        transactionHolder.itemView.setOnClickListener(v -> {
+            if (onTransactionClickListener != null) {
+                onTransactionClickListener.onTransactionClick(transaction);
+            }
+        });
     }
 
     @Override
