@@ -1,6 +1,6 @@
-# UI Code Explanation — Kalkulator Keuangan
+# UI Code Explanation — Artos
 
-Dokumen ini menjelaskan kode UI dan UI-logic pada aplikasi Android Java/XML `Kalkulator Keuangan`.
+Dokumen ini menjelaskan kode UI, UI-logic, data lokal, dan alur fitur pada aplikasi Android Java/XML `Artos`.
 
 Aplikasi ini memakai:
 
@@ -10,7 +10,194 @@ Aplikasi ini memakai:
 - `SharedPreferences` untuk data kecil seperti nama user dan budget.
 - Tidak ada backend/API eksternal.
 
-Dokumen ini dibuat untuk pembaca pemula. Fokusnya adalah bagaimana UI bekerja, bagaimana data ditempel ke tampilan, dan bagian mana yang harus hati-hati jika ingin mengubah UI lagi.
+Dokumen ini dibuat untuk pembaca pemula dan developer yang ingin memahami codebase hasil iterasi AI/vibe coding. Fokusnya adalah bagaimana UI bekerja, bagaimana data ditempel ke tampilan, bagaimana Activity saling terhubung, dan bagian mana yang harus hati-hati jika ingin mengubah UI atau logic lagi.
+
+Status final penting:
+
+- App label final: `Artos`.
+- Package/applicationId tetap: `com.java.kalkulatorkeuangan`.
+- Database lokal tetap: `keuangan.db`, version `2`.
+- Tabel transaksi tetap: `transactions`.
+- App tetap lokal, tanpa backend/API.
+- Budget yang diimplementasikan adalah budget bulanan global, bukan budget per kategori.
+- Custom bottom nav final dipakai pada Home, Pengeluaran, Budget, dan Riwayat.
+- Transaction CRUD final sudah tersedia melalui Riwayat -> Update/Delete Transaksi.
+
+---
+
+## Status Final Aplikasi Artos
+
+Bagian ini mengawali dokumen dengan status final aplikasi setelah redesign besar, Budget redesign, transaction CRUD, login polish, bottom nav stabilization, launcher branding, dan final QA fixes.
+
+Jika ada penjelasan lama yang terasa historis, source code final dan status final di dokumen ini adalah referensi utama.
+
+### Identitas Final Aplikasi
+
+Nama aplikasi yang tampil di launcher dan recent apps adalah:
+
+```text
+Artos
+```
+
+Nama ini berasal dari:
+
+```xml
+<string name="app_name">Artos</string>
+```
+
+Manifest tetap memakai resource:
+
+```xml
+android:label="@string/app_name"
+```
+
+Yang tidak berubah:
+
+- `namespace`
+- `applicationId`
+- Java package folder
+- database name
+- schema
+- SharedPreferences keys
+
+Package/applicationId tetap:
+
+```text
+com.java.kalkulatorkeuangan
+```
+
+Ini penting: mengganti nama aplikasi untuk user tidak berarti mengganti package identity Android. Kalau package/applicationId diganti sembarangan, app bisa dianggap app berbeda oleh Android, data lokal lama bisa tidak terbaca, dan instalasi/update bisa bermasalah.
+
+### Launcher Icon Final
+
+Launcher icon final memakai:
+
+- background hijau `#306D29`
+- logo Artos putih
+- foreground adaptive transparan
+- legacy mipmap icons untuk density standar
+
+Adaptive icon memakai struktur:
+
+```xml
+<adaptive-icon>
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+```
+
+Background adaptive:
+
+```xml
+<solid android:color="#306D29" />
+```
+
+Foreground adaptive berasal dari:
+
+```text
+app/src/main/res/drawable-nodpi/artos_logo_foreground.png
+```
+
+Aset ini adalah logo putih saja dengan background transparan.
+
+Ada juga:
+
+```text
+app/src/main/res/drawable-nodpi/artos_logo_preview.png
+```
+
+File preview berisi tampilan penuh background hijau + logo putih. File ini berguna sebagai referensi visual, tetapi foreground adaptive sebaiknya tetap memakai asset transparan agar Android adaptive icon mask bekerja dengan benar.
+
+Launcher icon scale final sudah dikecilkan beberapa kali. Target terakhir: logo menempati sekitar 42% canvas agar tidak terlalu zoomed-in dan punya safe padding yang nyaman.
+
+Kenapa perlu padding?
+
+- Android launcher berbeda-beda bentuk mask-nya.
+- Ada launcher yang memakai rounded square.
+- Ada launcher yang memakai circle.
+- Adaptive icon bisa dipotong oleh mask launcher.
+- Jika foreground terlalu besar, logo terasa mepet atau cropped.
+
+Karena itu foreground harus punya transparent safe area, bukan memenuhi canvas penuh.
+
+---
+
+## Arsitektur Final Project
+
+Project ini adalah Android Java/XML app dengan pola Activity-based. Tidak ada backend/API. Data utama hidup di SQLite lokal.
+
+Folder penting:
+
+### `app/src/main/java/com/java/kalkulatorkeuangan`
+
+Berisi file Java:
+
+- `MainActivity.java`
+- `HomeActivity.java`
+- `TambahTransaksiActivity.java`
+- `RiwayatActivity.java`
+- `TransactionAdapter.java`
+- `UpdateTransaksiActivity.java`
+- `PengeluaranActivity.java`
+- `ExpenseBarChartView.java`
+- `BudgetActivity.java`
+- `DatabaseHelper.java`
+- `Transaction.java`
+
+### `app/src/main/res/layout`
+
+Berisi XML layout halaman dan item:
+
+- `activity_main.xml`
+- `activity_home.xml`
+- `activity_tambah_transaksi.xml`
+- `activity_riwayat.xml`
+- `activity_update_transaksi.xml`
+- `activity_pengeluaran.xml`
+- `activity_budget.xml`
+- `item_transaction.xml`
+- `item_transaction_date_header.xml`
+- `item_analisis.xml`
+
+### `app/src/main/res/drawable`
+
+Berisi shape XML, background, progress drawable, launcher adaptive background, dan helper drawable lain.
+
+Contoh:
+
+- background card
+- rounded input
+- progress bar
+- bottom nav background
+- center FAB background
+- launcher background
+
+### `app/src/main/res/drawable-nodpi`
+
+Berisi PNG asset yang tidak ingin diskalakan otomatis berdasarkan density Android.
+
+Contoh:
+
+- icon kategori
+- icon bottom nav
+- icon status budget
+- logo Artos source
+
+### `app/src/main/res/mipmap-*`
+
+Berisi launcher icon untuk berbagai density.
+
+### `app/src/main/res/font`
+
+Berisi font seperti Plus Jakarta Sans dan Roboto.
+
+### `app/src/main/res/values`
+
+Berisi token seperti:
+
+- `strings.xml`
+- `colors.xml`
+- theme/style resources
 
 ---
 
@@ -160,7 +347,7 @@ Alur umum user:
 
 1. User membuka app.
 2. App menampilkan Login (`MainActivity`).
-3. User mengisi username dan menekan `Sign In`.
+3. User mengisi username/password dan menekan `Masuk`.
 4. Username disimpan ke `SharedPreferences`.
 5. App membuka Home (`HomeActivity`).
 6. Dari Home, user bisa:
@@ -179,7 +366,7 @@ Alur umum user:
 Yang terjadi:
 
 - User mengetik username di `etUsername`.
-- User klik `btnLogin`.
+- User klik `btnLogin` / tombol `Masuk`.
 - Jika username kosong, muncul `Toast`.
 - Jika tidak kosong, username disimpan ke `SharedPreferences` dengan nama file `SesiLogin` dan key `USERNAME`.
 - App membuka `HomeActivity`.
@@ -246,15 +433,21 @@ Halaman ini menampilkan:
 
 - sisa budget
 - progress budget
-- input target budget
-- tombol update budget
+- percentage badge
+- status card dinamis
+- edit budget card tersembunyi
+- tombol edit/simpan/batal budget
 
 ### Bottom navigation flow
 
-Ada dua model bottom navigation dalam project:
+Bottom navigation final memakai custom bottom nav XML pada semua halaman utama:
 
-- Home dan Riwayat memakai custom bottom nav XML sendiri.
-- Budget dan Pengeluaran masih memakai `BottomNavigationView` bawaan Material.
+- Home memakai custom bottom nav.
+- Pengeluaran memakai custom bottom nav.
+- Budget memakai custom bottom nav.
+- Riwayat memakai custom bottom nav.
+
+Model lama `BottomNavigationView`/`BottomAppBar` sudah tidak menjadi nav utama pada halaman final.
 
 Custom bottom nav memiliki ID:
 
@@ -272,6 +465,79 @@ Center plus button membuka `TambahTransaksiActivity`.
 ## 3. Penjelasan File Java UI / UI Logic
 
 ### MainActivity.java
+
+#### Status Final MainActivity.java
+
+`MainActivity.java` adalah entry point launcher. Activity ini menampilkan halaman Login.
+
+Layout:
+
+```text
+activity_main.xml
+```
+
+UI final login memakai teks Indonesia:
+
+- `Halo!`
+- `Selamat datang kembali, pantau keuangan Kamu`
+- `Masukkan Nama Pengguna`
+- `Kata Sandi`
+- `Masuk`
+
+Teks/fitur `Recovery Password` sudah dihapus.
+
+##### Data session
+
+Login menyimpan username ke:
+
+```java
+getSharedPreferences("SesiLogin", MODE_PRIVATE)
+```
+
+Key:
+
+```text
+USERNAME
+```
+
+`HomeActivity` membaca key yang sama untuk membuat greeting.
+
+##### Username dan password
+
+UI punya username dan password field. Logic login harus tetap mempertahankan perilaku validasi yang sudah ada di source final. Jangan mengganti credential/validasi tanpa audit, karena task polish Login sebelumnya sengaja tidak mengubah login/session behavior.
+
+##### Keyboard transition fix
+
+Final QA menemukan bug: ketika user login saat keyboard masih terbuka, Home terbuka tetapi custom bottom nav sempat terlihat di tengah layar.
+
+Root cause yang paling masuk akal:
+
+- Login memakai `ScrollView` dan `adjustResize`.
+- Keyboard masih aktif ketika Home mulai dilayout.
+- Home bottom nav pertama kali diukur saat window masih dalam mode resize.
+
+Fix final:
+
+1. Clear focus dari input username/password.
+2. Hide keyboard via `InputMethodManager`.
+3. Buka Home setelah delay kecil sekitar `120ms`.
+
+Kenapa delay kecil diperlukan?
+
+- Request hide keyboard tidak selalu selesai sinkron pada frame yang sama.
+- Delay memberi waktu IME/window untuk kembali normal.
+- Home kemudian dilayout dalam tinggi layar normal.
+
+Hal yang jangan diubah sembarangan:
+
+- `SesiLogin`
+- `USERNAME`
+- logic login yang sudah bekerja
+- delay keyboard transition kecuali sudah diuji ulang di device/emulator
+- `windowSoftInputMode` Login, karena login butuh keyboard tetap usable
+
+---
+
 
 #### Fungsi utama file
 
@@ -332,7 +598,7 @@ setContentView(R.layout.activity_main);
 
 ##### `btnLogin.setOnClickListener(...)`
 
-- Dipanggil saat user menekan tombol Sign In.
+- Dipanggil saat user menekan tombol Masuk.
 - Membaca username:
 
 ```java
@@ -349,7 +615,7 @@ String inputNama = etUsername.getText().toString().trim();
 
 1. Login muncul.
 2. User mengetik username.
-3. User klik Sign In.
+3. User klik Masuk.
 4. App validasi username.
 5. App simpan username.
 6. App pindah ke Home.
@@ -388,6 +654,127 @@ Nilai ini dibaca lagi oleh `HomeActivity`.
 ---
 
 ### HomeActivity.java
+
+#### Status Final HomeActivity.java
+
+`HomeActivity.java` adalah dashboard utama.
+
+Layout:
+
+```text
+activity_home.xml
+```
+
+Home menampilkan:
+
+- greeting user
+- total saldo all-time
+- saldo bulan ini
+- pemasukan bulan ini
+- pengeluaran bulan ini
+- transaksi terakhir
+- budget summary card
+- custom bottom nav
+- center FAB
+
+##### Sumber data
+
+Home memakai:
+
+- SQLite via `DatabaseHelper`
+- SharedPreferences `SesiLogin`
+- SharedPreferences `BudgetPrefs`
+
+##### Greeting
+
+Nama user dibaca dari:
+
+```text
+SesiLogin / USERNAME
+```
+
+Lalu ditampilkan sebagai greeting.
+
+##### Total saldo all-time
+
+Total saldo semua waktu:
+
+```text
+getTotalPemasukan() - getTotalPengeluaran()
+```
+
+Ini memakai query total all-time dari SQLite.
+
+##### Saldo bulan ini
+
+Saldo bulan ini dihitung dari semua transaksi dengan filter bulan/tahun sekarang.
+
+Rumus:
+
+```text
+monthlyPemasukan - monthlyPengeluaran
+```
+
+Kenapa tidak memakai total all-time?
+
+Karena kartu ini menjawab kondisi bulan berjalan, bukan seluruh riwayat.
+
+##### Recent transactions
+
+Home menampilkan transaksi terbaru.
+
+Sorting memakai:
+
+- tanggal transaksi
+- id transaksi sebagai tie-breaker
+
+Tanggal invalid tidak boleh membuat app crash. Transaksi invalid tetap ditangani aman.
+
+##### Budget card
+
+Budget summary membaca budget dari:
+
+```text
+BudgetPrefs / budget
+```
+
+Lalu membandingkan dengan pengeluaran bulan ini.
+
+##### Refresh di onResume()
+
+Home memanggil refresh dashboard di `onResume()`.
+
+Ini penting karena data Home bisa berubah setelah:
+
+- user menambah transaksi
+- user update transaksi
+- user delete transaksi
+- user edit budget dari Budget page
+
+Tanpa `onResume()`, Home bisa menampilkan data stale sampai Activity dibuat ulang.
+
+##### Bottom nav
+
+Home memasang click listener untuk:
+
+- Home: no-op
+- Pengeluaran: buka `PengeluaranActivity`
+- Budget: buka `BudgetActivity`
+- Riwayat: buka `RiwayatActivity`
+- center FAB: buka `TambahTransaksiActivity`
+
+Navigasi bottom nav memakai transisi tanpa animasi besar agar terasa seperti tab.
+
+Hal yang jangan diubah sembarangan:
+
+- format tanggal parser
+- type string `Pengeluaran` / `Pemasukan`
+- ID dashboard
+- refresh `onResume()`
+- bottom nav click behavior
+
+---
+
 
 #### Fungsi utama file
 
@@ -670,6 +1057,133 @@ SharedPreferences:
 
 ### TambahTransaksiActivity.java
 
+#### Status Final TambahTransaksiActivity.java
+
+`TambahTransaksiActivity.java` menangani penambahan transaksi baru.
+
+Layout:
+
+```text
+activity_tambah_transaksi.xml
+```
+
+User bisa mengisi:
+
+- type
+- nominal
+- tanggal
+- kategori
+- catatan
+
+##### Type selector
+
+Type transaksi:
+
+- `Pengeluaran`
+- `Pemasukan`
+
+Nilai string ini masuk ke database dan dipakai banyak halaman. Jangan diganti ke lowercase, bahasa lain, atau ejaan berbeda tanpa migration menyeluruh.
+
+##### Nominal formatter
+
+Saat user mengetik nominal:
+
+```text
+1500000
+```
+
+UI menampilkan:
+
+```text
+1.500.000
+```
+
+Sebelum disimpan:
+
+- titik dihapus
+- `Rp` dihapus jika ada
+- spasi dihapus
+- karakter non-digit dibersihkan
+
+Database menyimpan `amount` sebagai angka `REAL`.
+
+##### DatePicker dan display date
+
+User memilih tanggal via DatePicker.
+
+Display ramah:
+
+- `Hari ini, ...`
+- `Kemarin, ...`
+- nama hari Indonesia
+
+Tetapi DB date tetap:
+
+```text
+d/M/yyyy
+```
+
+Contoh:
+
+```text
+25/6/2026
+```
+
+Ini adalah kontrak penting lintas app.
+
+##### Category selector
+
+Kategori memakai icon selector.
+
+Kategori `Pemasukan` biasanya selaras dengan type `Pemasukan`.
+
+Kategori pengeluaran:
+
+- `Makanan`
+- `Camilan`
+- `Belanja`
+- `Tagihan`
+- `Kesehatan`
+- `Edukasi`
+- `Hiburan`
+- `Tabungan`
+- `Sewa Kos`
+- `Lainnya`
+
+Kategori dipakai oleh:
+
+- Riwayat filter
+- icon mapping
+- Pengeluaran breakdown
+- Home recent transaction icon
+
+##### Catatan auto-scroll
+
+Field Catatan bisa tertutup keyboard. Karena itu Input page punya behavior auto-scroll saat Catatan fokus/diketik.
+
+Pola umumnya:
+
+```java
+scrollView.postDelayed(() -> {
+    scrollView.smoothScrollTo(0, etCatatan.getBottom());
+}, 250);
+```
+
+Tujuannya bukan animasi fancy, tetapi usability: user tetap bisa melihat field yang sedang diketik.
+
+##### Insert transaksi
+
+Saat simpan:
+
+```java
+insertTransaction(type, amount, category, note, date)
+```
+
+Ini membuat row baru. Untuk update transaksi lama, jangan gunakan insert.
+
+---
+
+
 #### Fungsi utama file
 
 `TambahTransaksiActivity.java` adalah halaman input transaksi. File ini bertanggung jawab untuk:
@@ -940,6 +1454,114 @@ Tidak memakai SharedPreferences.
 
 ### RiwayatActivity.java
 
+#### Status Final RiwayatActivity.java
+
+`RiwayatActivity.java` menampilkan daftar transaksi.
+
+Layout:
+
+```text
+activity_riwayat.xml
+```
+
+Komponen:
+
+- search bar
+- filter chips
+- RecyclerView
+- empty state
+- custom bottom nav
+
+##### allTransactions
+
+Riwayat menyimpan data mentah dari SQLite dalam list seperti `allTransactions`.
+
+Data ini menjadi sumber untuk:
+
+- search
+- filter
+- sort
+- date grouping
+
+##### Search
+
+Search mencocokkan teks terhadap:
+
+- note/catatan
+- category
+- type
+
+Search bersifat case-insensitive.
+
+##### Filter
+
+Filter chip bisa menampilkan:
+
+- semua transaksi
+- pemasukan
+- kategori tertentu
+
+Search dan filter bekerja bersama. Jika search aktif dan filter aktif, hasil harus memenuhi keduanya.
+
+##### Sorting
+
+Sorting memakai tanggal hasil parsing `d/M/yyyy`.
+
+Urutan:
+
+- transaksi tanggal terbaru lebih atas
+- jika tanggal sama, id lebih besar lebih atas
+
+Kenapa id penting?
+
+Karena dua transaksi bisa punya tanggal sama. ID membantu menampilkan transaksi yang dibuat belakangan lebih atas.
+
+##### Date grouping
+
+Setelah sorting, list diberi header tanggal.
+
+Adapter menerima campuran:
+
+- header tanggal
+- transaction item
+
+Header tanggal tidak clickable.
+
+##### Click to Update/Delete
+
+Transaction row punya click listener. Saat diklik:
+
+```java
+Intent intent = new Intent(RiwayatActivity.this, UpdateTransaksiActivity.class);
+intent.putExtra(UpdateTransaksiActivity.EXTRA_TRANSACTION_ID, transaction.getId());
+startActivity(intent);
+```
+
+Riwayat tidak mengirim seluruh data transaksi sebagai extra. Riwayat hanya mengirim ID, lalu UpdateTransaksiActivity mengambil data terbaru dari SQLite.
+
+Ini lebih aman karena:
+
+- data yang dibuka selalu sesuai row database
+- Intent tidak membawa payload besar
+- update/delete memakai primary key yang jelas
+
+##### Refresh di onResume()
+
+Riwayat reload data di `onResume()`.
+
+Setelah Update/Delete selesai dan Activity ditutup, user kembali ke Riwayat dan list langsung fresh.
+
+Hal yang jangan diubah sembarangan:
+
+- search/filter state
+- sorting by parsed date + id
+- grouping header
+- click hanya untuk transaction row, bukan header
+- `EXTRA_TRANSACTION_ID`
+
+---
+
+
 #### Fungsi utama file
 
 `RiwayatActivity.java` adalah halaman daftar riwayat transaksi. File ini bertanggung jawab untuk:
@@ -1189,7 +1811,206 @@ SharedPreferences:
 
 ---
 
+### UpdateTransaksiActivity.java
+
+`UpdateTransaksiActivity.java` adalah halaman edit/delete transaksi.
+
+Layout:
+
+```text
+activity_update_transaksi.xml
+```
+
+Halaman ini dibuat terpisah dari `TambahTransaksiActivity` agar add flow tidak ikut berisiko rusak.
+
+#### Entry point
+
+Halaman dibuka dari Riwayat melalui transaction ID:
+
+```java
+public static final String EXTRA_TRANSACTION_ID = "transaction_id";
+```
+
+Jika ID missing/invalid:
+
+- tampilkan pesan aman
+- jangan query/update/delete row invalid
+
+#### Load transaction by ID
+
+Data dimuat via:
+
+```java
+getTransactionById(transactionId)
+```
+
+Cursor harus ditutup setelah dipakai.
+
+Jika cursor kosong:
+
+- transaksi tidak ditemukan
+- halaman bisa ditutup aman
+
+#### Prefill
+
+Field yang diprefill:
+
+- type
+- nominal
+- date display
+- selected DB date
+- category
+- note/catatan
+
+#### Type locked
+
+Type selector terlihat, tetapi tidak boleh mengubah jenis transaksi.
+
+Alasan:
+
+- Mengubah `Pengeluaran` menjadi `Pemasukan` bisa mengubah makna data historis.
+- Reporting Home/Pengeluaran/Budget bergantung pada type.
+- Flow update difokuskan pada edit amount/date/category/note, bukan convert transaction type.
+
+Saat update, Activity memakai:
+
+```java
+originalType
+```
+
+bukan mengambil nilai type dari UI yang mungkin berubah.
+
+#### Update / Simpan
+
+Tombol `Simpan`:
+
+1. validasi transaction ID
+2. parse nominal
+3. validasi nominal > 0
+4. validasi selected DB date
+5. validasi selected category
+6. trim note
+7. panggil:
+
+```java
+updateTransaction(transactionId, originalType, amount, selectedCategory, note, selectedDbDate)
+```
+
+Jika sukses:
+
+- Toast sukses
+- `setResult(RESULT_OK)`
+- `finish()`
+
+Jika gagal:
+
+- Toast gagal
+- tetap di halaman
+
+Tidak boleh memanggil `insertTransaction(...)` dari update page.
+
+#### Delete / Hapus
+
+Tombol `Hapus` menampilkan confirmation dialog.
+
+Dialog:
+
+- title: `Hapus Transaksi?`
+- message: `Transaksi yang dihapus tidak dapat dikembalikan.`
+- negative: `Batal`
+- positive: `Hapus`
+
+Warna button dialog:
+
+- `Batal`: `#306D29`
+- `Hapus`: `#B3261E`
+
+Positive click memanggil:
+
+```java
+deleteTransaction(transactionId)
+```
+
+Jika sukses:
+
+- Toast `Transaksi berhasil dihapus`
+- `setResult(RESULT_OK)`
+- `finish()`
+
+#### Catatan auto-scroll
+
+Update page memakai auto-scroll Catatan seperti Input page. Ini penting karena layout edit panjang dan keyboard bisa menutup field Catatan.
+
+Hal yang jangan diubah sembarangan:
+
+- `EXTRA_TRANSACTION_ID`
+- `originalType`
+- parse amount
+- selected DB date
+- category string
+- delete confirmation
+- dialog positive button logic
+
+---
+
 ### PengeluaranActivity.java
+
+#### Status Final PengeluaranActivity.java
+
+`PengeluaranActivity.java` adalah halaman analisis pengeluaran bulanan.
+
+Layout:
+
+```text
+activity_pengeluaran.xml
+```
+
+Fitur:
+
+- total pengeluaran bulan terpilih
+- month chip / month selector
+- chart 6 bulan
+- category breakdown
+- custom bottom nav
+
+##### Selected month state
+
+Halaman menyimpan bulan yang sedang dipilih user.
+
+Saat `onResume()`:
+
+- data refresh
+- selected month tidak direset ke bulan sekarang
+
+Kenapa selected month harus dipertahankan?
+
+Jika user sedang melihat bulan lama, lalu membuka halaman lain dan kembali, user tidak ingin tiba-tiba kembali ke bulan sekarang.
+
+##### Data source
+
+Pengeluaran membaca transaksi SQLite, lalu filter:
+
+- type `Pengeluaran`
+- date sesuai bulan/tahun target
+
+Date parser harus tetap sesuai format:
+
+```text
+d/M/yyyy
+```
+
+##### Category breakdown
+
+Breakdown kategori menjumlahkan amount per kategori pengeluaran.
+
+Kategori yang tidak ada transaksi biasanya tidak perlu tampil sebagai card aktif.
+
+##### Chart 6 bulan
+
+Chart menampilkan data pengeluaran beberapa bulan terakhir. Rendering chart dilakukan oleh custom view `ExpenseBarChartView`.
+
+---
+
 
 #### Fungsi utama file
 
@@ -1289,11 +2110,146 @@ Database:
 
 ---
 
+### ExpenseBarChartView.java
+
+`ExpenseBarChartView.java` adalah custom view untuk menggambar chart pengeluaran.
+
+Karena custom view menggambar manual ke Canvas, perubahan kecil pada konstanta spacing bisa berdampak besar.
+
+Elemen chart:
+
+- bar 6 bulan
+- label bulan
+- nilai/scale visual
+- average line / reference line jika ada
+- spacing kiri/kanan/atas/bawah
+
+Kenapa hati-hati?
+
+- Chart bukan layout XML biasa.
+- Posisi bar dan label dihitung manual.
+- Jika padding/spacing diubah sembarangan, label bisa overlap, bar bisa kepotong, atau chart terlihat tidak center.
+
+Jika ingin mengubah chart:
+
+1. audit ukuran canvas
+2. audit padding internal
+3. audit tinggi bar max
+4. audit label baseline
+5. test di layar kecil dan besar
+
+---
+
 ### BudgetActivity.java
+
+#### Status Final BudgetActivity.java
+
+`BudgetActivity.java` adalah halaman budget global bulanan.
+
+Layout:
+
+```text
+activity_budget.xml
+```
+
+Budget bukan per kategori.
+
+Storage:
+
+```text
+BudgetPrefs / budget
+```
+
+##### Current-month expense
+
+Budget menghitung pengeluaran bulan berjalan dari SQLite:
+
+1. baca `getAllTransactions()`
+2. filter `type == "Pengeluaran"`
+3. parse date `d/M/yyyy`
+4. ambil hanya bulan/tahun sekarang
+5. jumlahkan amount
+
+Budget tidak memakai `getTotalPengeluaran()` untuk terpakai, karena method itu total all-time.
+
+##### UI yang di-bind
+
+Budget mengisi:
+
+- `tvSisaBudget`
+- `tvBudgetUsed`
+- `tvBudgetTotal`
+- `tvBudgetPercentBadge`
+- `progressBudget`
+- status card icon/title/description
+
+##### Rupiah formatting
+
+Angka diformat dengan titik:
+
+```text
+Rp 3.000.000
+```
+
+Sisa budget boleh negatif:
+
+```text
+- Rp 245.000
+```
+
+Progress bar capped 0-100, tetapi percentage badge boleh menunjukkan lebih dari 100%.
+
+##### Status card
+
+Kondisi:
+
+- `< 80%`: aman / terkendali
+- `80% - 100%`: hampir mencapai batas
+- `> 100%`: melebihi budget
+
+Status mengganti:
+
+- icon
+- background icon container
+- title
+- description
+
+##### Edit budget card
+
+Card edit hidden by default.
+
+Alur:
+
+1. user tap `Edit`
+2. `cardEditBudget` tampil
+3. input diprefill dengan `Rp ...`
+4. user edit nominal
+5. `Simpan` validasi dan simpan ke `BudgetPrefs/budget`
+6. UI refresh tanpa recreate
+7. `Batal` hide card tanpa save
+
+Input menerima:
+
+- `3500000`
+- `3.500.000`
+- `Rp 3.500.000`
+
+##### onResume refresh
+
+Budget refresh di `onResume()` agar update/delete transaksi dari halaman lain langsung mempengaruhi:
+
+- terpakai
+- sisa
+- progress
+- percentage
+- status card
+
+---
+
 
 #### Fungsi utama file
 
-`BudgetActivity.java` menampilkan dan mengubah target budget user.
+`BudgetActivity.java` menampilkan dan mengubah budget global bulanan user. Budget final bukan budget per kategori.
 
 #### Struktur class
 
@@ -1393,6 +2349,72 @@ SharedPreferences:
 ---
 
 ### TransactionAdapter.java
+
+#### Status Final TransactionAdapter.java
+
+`TransactionAdapter.java` adalah penghubung data transaksi ke RecyclerView.
+
+Adapter menangani dua item type:
+
+- date header
+- transaction row
+
+##### Date header item
+
+Header menampilkan tanggal group.
+
+Header tidak boleh clickable karena bukan transaksi dan tidak punya transaction ID.
+
+Jika header ikut clickable, app bisa mencoba membuka UpdateTransaksiActivity dengan ID invalid.
+
+##### Transaction item
+
+Transaction row menampilkan:
+
+- icon kategori
+- note/catatan sebagai title
+- category/type sebagai subtitle
+- amount di kanan
+
+Amount formatting:
+
+- `Pemasukan`: `+ Rp ...`, hijau
+- `Pengeluaran`: `- Rp ...`, merah
+
+##### Category icon mapping
+
+Adapter memilih icon berdasarkan category/type.
+
+Mapping ini harus konsisten dengan Input dan Home.
+
+Jika kategori baru ditambahkan, update juga:
+
+- Input category selector
+- TransactionAdapter icon mapping
+- Home icon mapping
+- Pengeluaran breakdown/icon mapping jika ada
+- Riwayat filter chips jika kategori harus bisa difilter
+
+##### OnTransactionClickListener
+
+Adapter punya callback:
+
+```java
+interface OnTransactionClickListener {
+    void onTransactionClick(Transaction transaction);
+}
+```
+
+Riwayat memasang listener ini agar click row transaksi membuka Update/Delete.
+
+Keuntungan pola callback:
+
+- Adapter tidak perlu tahu Activity tujuan.
+- Adapter hanya memberi tahu bahwa transaction diklik.
+- Riwayat yang menentukan navigation.
+
+---
+
 
 #### Fungsi utama file
 
@@ -1528,6 +2550,35 @@ ID item:
 
 ### Transaction.java
 
+#### Status Final Transaction.java
+
+`Transaction.java` adalah model sederhana untuk satu transaksi.
+
+Field:
+
+- `id`
+- `type`
+- `amount`
+- `category`
+- `note`
+- `date`
+
+`id` sangat penting untuk fitur Update/Delete.
+
+Tanpa id, Riwayat hanya tahu data visual transaksi, tetapi tidak tahu row database mana yang harus diedit/dihapus.
+
+Current flow tidak membutuhkan setter besar-besaran karena data biasanya:
+
+1. dibaca dari SQLite
+2. dibuat menjadi object `Transaction`
+3. dikirim ke adapter
+4. dipakai untuk render/click
+
+Update dilakukan melalui `DatabaseHelper`, bukan dengan mengubah object lalu auto-sync.
+
+---
+
+
 #### Fungsi utama file
 
 `Transaction.java` adalah model data transaksi.
@@ -1604,6 +2655,97 @@ Tidak langsung.
 ---
 
 ### DatabaseHelper.java
+
+#### Status Final DatabaseHelper.java
+
+Database:
+
+```text
+keuangan.db
+```
+
+Version:
+
+```text
+2
+```
+
+Table:
+
+```text
+transactions
+```
+
+Columns:
+
+- `id INTEGER PRIMARY KEY AUTOINCREMENT`
+- `type TEXT`
+- `amount REAL`
+- `category TEXT`
+- `note TEXT`
+- `date TEXT`
+
+##### Insert
+
+```java
+insertTransaction(String type, double amount, String category, String note, String date)
+```
+
+Dipakai oleh Input page untuk membuat transaksi baru.
+
+##### Read
+
+```java
+getAllTransactions()
+getLastTransactions()
+getTotalPemasukan()
+getTotalPengeluaran()
+getExpenseAnalysis()
+```
+
+`getAllTransactions()` dipakai banyak halaman karena fleksibel untuk filter di Java:
+
+- Home monthly totals
+- Riwayat list
+- Budget current-month expense
+- Pengeluaran selected month
+
+##### CRUD by id
+
+```java
+getTransactionById(int id)
+updateTransaction(int id, String type, double amount, String category, String note, String date)
+deleteTransaction(int id)
+```
+
+Update/delete memakai `id` karena:
+
+- id adalah primary key
+- note/amount/date/category tidak unik
+- transaksi dengan data mirip bisa lebih dari satu
+- update/delete harus menyasar row yang tepat
+
+Schema tidak perlu berubah untuk CRUD karena semua kolom edit sudah ada.
+
+##### Kontrak penting
+
+Jangan ubah string:
+
+```text
+Pengeluaran
+Pemasukan
+```
+
+Jangan ubah format date:
+
+```text
+d/M/yyyy
+```
+
+Jika dua kontrak ini berubah, banyak halaman akan salah filter/hitung.
+
+---
+
 
 #### Fungsi utama file
 
@@ -1692,6 +2834,143 @@ Artinya class ini helper resmi Android untuk membuat dan membaca database SQLite
 ---
 
 ## 4. Penjelasan File XML Layout
+
+### Ringkasan Final XML Layout Penting
+
+#### activity_main.xml
+
+Layout Login final.
+
+Berisi:
+
+- ScrollView untuk keyboard usability
+- title `Halo!`
+- subtitle Indonesia
+- username field
+- password field
+- tombol `Masuk`
+
+Recovery password sudah tidak ada.
+
+ScrollView + `adjustResize` membantu tombol tetap reachable saat keyboard terbuka.
+
+#### activity_home.xml
+
+Layout dashboard Home.
+
+Bagian utama:
+
+- greeting user
+- green balance card
+- monthly finance card
+- recent transaction card
+- budget summary card
+- custom bottom nav
+- center FAB
+
+Home white card shadow sudah dipoles agar tidak terlihat seperti border/stroke.
+
+#### activity_tambah_transaksi.xml
+
+Layout Input transaksi.
+
+Bagian:
+
+- amount section
+- type selector
+- date pill
+- category grid
+- note field
+- bottom buttons `Batal` dan `Tambahkan`
+
+Date pill memakai white background, no harsh stroke, dan subtle shadow dengan clipping fix.
+
+#### activity_riwayat.xml
+
+Layout Riwayat.
+
+Bagian:
+
+- search bar
+- horizontal filter chips
+- RecyclerView transaksi
+- empty state
+- custom bottom nav
+
+RecyclerView diberi padding agar item tidak tertutup nav/FAB.
+
+#### item_transaction.xml
+
+Layout row transaksi.
+
+Berisi:
+
+- icon kategori
+- note sebagai title
+- category/type sebagai subtitle
+- amount kanan
+
+Seluruh transaction row adalah click target untuk membuka Update/Delete.
+
+#### item_transaction_date_header.xml
+
+Layout header tanggal.
+
+Header hanya label group, bukan transaksi.
+
+#### activity_update_transaksi.xml
+
+Layout Update/Delete transaksi.
+
+Visualnya mengikuti Input page, tetapi tombol bawah:
+
+- `Hapus`
+- `Simpan`
+
+Type selector terlihat tetapi dikunci. Date pill, category grid, amount, dan catatan diprefill dari transaksi existing.
+
+#### activity_pengeluaran.xml
+
+Layout Pengeluaran final.
+
+Bagian:
+
+- header/summary
+- month chip
+- chart card
+- category breakdown list
+- custom bottom nav
+- center FAB final
+
+#### item_analisis.xml
+
+Layout card/item analisis kategori pengeluaran.
+
+Menampilkan:
+
+- icon/kategori
+- total kategori
+- persentase/progress jika ada
+
+#### activity_budget.xml
+
+Layout Budget final.
+
+Bagian:
+
+- green header
+- `Sisa Budget`
+- used/total text
+- progress bar
+- percentage badge
+- status card
+- hidden edit budget card
+- custom bottom nav
+
+Tidak ada category budget section karena app belum punya storage budget per kategori.
+
+---
+
 
 ### activity_main.xml
 
@@ -2038,11 +3317,11 @@ Parent:
 
 - `CoordinatorLayout`
 
-Isi:
+Isi final:
 
 - `NestedScrollView` untuk konten.
-- `BottomAppBar` dan `BottomNavigationView`.
-- `FloatingActionButton`.
+- custom bottom nav (`customBottomNav`).
+- center FAB (`fabAdd`) dengan struktur/ripple final.
 
 #### Komponen penting
 
@@ -2052,11 +3331,11 @@ Isi:
 - `containerKategori`
   - Tempat item kategori dimasukkan secara dinamis.
 
-- `bottomNavigation`
-  - Bottom nav bawaan.
+- `customBottomNav`
+  - Bottom nav custom final.
 
 - `fabAdd`
-  - Tombol tambah.
+  - Tombol tambah transaksi di tengah nav.
 
 #### Style/tampilan
 
@@ -2092,9 +3371,8 @@ Parent:
 Isi:
 
 - `NestedScrollView`.
-- `BottomAppBar`.
-- `BottomNavigationView`.
-- `FloatingActionButton`.
+- custom bottom nav (`customBottomNav`).
+- center FAB (`fabAdd`).
 
 #### Komponen penting
 
@@ -2120,7 +3398,7 @@ Dipakai oleh:
 #### Hal yang jangan sembarang diubah
 
 - ID budget yang dipakai Java.
-- Bottom nav bawaan jika Java belum ikut diubah.
+- Custom bottom nav final; jaga ID nav dan FAB yang dipakai Java.
 
 ---
 
@@ -2405,6 +3683,68 @@ Setelah sorting, adapter membuat header tanggal lagi sesuai hasil filter.
 
 ## 7. Penjelasan Bottom Navigation
 
+### Status Final Custom Bottom Navigation
+
+Custom bottom nav diduplikasi di:
+
+- `activity_home.xml`
+- `activity_pengeluaran.xml`
+- `activity_budget.xml`
+- `activity_riwayat.xml`
+
+Ini sengaja dipertahankan sebagai pattern project saat ini. Refactor menjadi reusable component bisa dilakukan di masa depan, tetapi jangan dilakukan casual karena nav sudah banyak dipoles.
+
+#### Item nav
+
+Item:
+
+- Beranda
+- Pengeluaran
+- Budget
+- Riwayat
+
+Setiap item punya:
+
+- icon `ImageView`
+- label `TextView`
+
+#### FAB tengah
+
+Center FAB:
+
+- id `fabAdd`
+- membuka `TambahTransaksiActivity`
+- memakai icon `ic_input`
+- memakai background `bg_center_input_button`
+- memakai ripple/halo circular final
+
+#### Alignment final
+
+Final QA menemukan Pengeluaran active/inactive tampak shift.
+
+Perbaikan final:
+
+- nav icon fixed `24dp x 24dp`
+- `scaleType="centerInside"`
+- `adjustViewBounds="false"`
+- label `gravity="center"`
+- label `textAlignment="center"`
+- `includeFontPadding="false"`
+- `singleLine="true"`
+- font label regular untuk active/inactive
+- Pengeluaran label `9sp`, sama dengan label lain
+
+Kenapa active/inactive tidak memakai font weight berbeda?
+
+Karena perubahan regular -> medium bisa mengubah metrik teks. Untuk label panjang seperti `Pengeluaran`, perubahan kecil ini terlihat seperti shift.
+
+Kenapa PNG shift attempt tidak dijadikan fix utama?
+
+Karena audit menunjukkan masalah tidak hanya asset. XML text metrics juga bisa membuat label/kelompok visual terlihat bergeser. Fix final menstabilkan layout metrics.
+
+---
+
+
 ### Custom bottom nav
 
 Custom bottom nav dipakai di:
@@ -2663,6 +4003,64 @@ Home memakai mapping kategori yang mirip dengan Riwayat.
 
 ## 10. Penjelasan Drawables / Background / Icons
 
+### UI Polish Final
+
+Token warna utama:
+
+- app background: `#FFFDF7`
+- primary green: `#306D29`
+- main text: `#262A24`
+- destructive/expense red: `#B3261E`
+- orange progress/badge: `#FFA43C`
+- neutral input/card border: `#EDEDE8`
+
+Font:
+
+- Plus Jakarta Sans dipakai untuk banyak label dan UI modern.
+- Roboto masih bisa muncul pada area tertentu sesuai desain lama/Android default.
+
+#### Shadow polish
+
+Riwayat, Pengeluaran, Budget, Home, Input, dan Update mengalami beberapa iterasi shadow.
+
+Pelajaran penting:
+
+- Android `elevation` tidak sama persis dengan Figma `box-shadow`.
+- `6dp` native elevation terasa terlalu berat.
+- Banyak card akhirnya dibuat lebih soft dengan `1dp-3dp`.
+- Shadow clipping diperbaiki dengan parent `clipChildren=false` / `clipToPadding=false` pada area yang tepat.
+- Jangan menambahkan shadow ke button, chips, progress bar, bottom nav, atau FAB jika desain tidak meminta.
+
+#### Date pill polish
+
+Input dan Update date pill:
+
+- white background
+- no visible harsh stroke
+- subtle shadow
+- clipping diperbaiki
+
+#### Delete dialog polish
+
+Dialog delete tetap default AlertDialog, tetapi button color disesuaikan:
+
+- `Batal`: hijau
+- `Hapus`: merah
+
+Tidak perlu custom dialog layout karena default layout sudah cukup.
+
+#### Login polish
+
+Login:
+
+- teks Indonesia
+- Recovery Password dihapus
+- button keyboard reachable
+- transition keyboard -> Home diperbaiki
+
+---
+
+
 ### Bottom nav
 
 - `bg_bottom_nav.xml`
@@ -2833,6 +4231,219 @@ Folder font:
 ---
 
 ## 12. Checklist Jika Mau Edit UI Lagi
+
+### Data Consistency dan Refresh Flow Final
+
+Semua halaman data-driven harus refresh ketika user kembali dari halaman lain.
+
+#### Home
+
+Refresh di `onResume()`:
+
+- saldo
+- saldo bulan ini
+- pemasukan/pengeluaran bulan ini
+- recent transactions
+- budget card
+
+#### Riwayat
+
+Refresh di `onResume()`:
+
+- transaksi baru
+- transaksi update
+- transaksi delete
+- search/filter tetap dirender ulang dengan data terbaru
+
+#### Pengeluaran
+
+Refresh di `onResume()`:
+
+- total pengeluaran bulan terpilih
+- chart
+- breakdown kategori
+
+Selected month dipertahankan.
+
+#### Budget
+
+Refresh di `onResume()`:
+
+- terpakai bulan ini
+- sisa budget
+- progress
+- percentage badge
+- status card
+
+#### Kenapa tidak butuh restart app?
+
+Karena tiap halaman yang bergantung pada SQLite/SharedPreferences membaca ulang data saat kembali aktif. Ini membuat update/delete transaksi langsung tercermin di halaman lain.
+
+---
+
+### Catatan Penting: Do Not Change Carelessly
+
+Jangan ubah hal berikut tanpa rencana:
+
+#### DB date format
+
+```text
+d/M/yyyy
+```
+
+Dipakai oleh parser lintas halaman.
+
+#### Transaction type strings
+
+```text
+Pengeluaran
+Pemasukan
+```
+
+Dipakai oleh filter, total, chart, budget, dan warna amount.
+
+#### SharedPreferences keys
+
+```text
+SesiLogin / USERNAME
+BudgetPrefs / budget
+```
+
+Jika diubah, data lama user tidak terbaca.
+
+#### Package/applicationId
+
+Jangan ganti hanya untuk rename app. App label cukup diubah lewat `app_name`.
+
+#### Bottom nav duplication
+
+Custom bottom nav memang duplicate di beberapa XML. Jangan refactor cepat tanpa test semua halaman karena alignment/FAB/ripple sudah dipoles manual.
+
+#### Chart spacing constants
+
+`ExpenseBarChartView` memakai Canvas drawing manual. Ubah spacing hanya setelah visual QA.
+
+#### CRUD schema
+
+Update/delete sudah cukup dengan id dan kolom yang ada. Jangan ubah schema tanpa migration plan.
+
+#### Category budget
+
+Budget per kategori belum diimplementasikan. Jangan menambahkan UI category budget yang seolah-olah editable kalau storage/logic belum ada.
+
+---
+
+### Final QA Checklist Detail
+
+#### Login
+
+- App label tampil `Artos`.
+- Login menampilkan teks Indonesia.
+- Recovery Password tidak muncul.
+- Username/password field bisa difokuskan.
+- Keyboard tidak menutup tombol `Masuk` secara permanen.
+- Login sukses membuka Home.
+- Login saat keyboard terbuka tidak membuat Home bottom nav glitch.
+
+#### Home
+
+- Greeting tampil.
+- Total saldo all-time benar.
+- Saldo bulan ini benar.
+- Pemasukan/pengeluaran bulan ini benar.
+- Recent transactions tampil.
+- Budget card mengikuti budget terbaru.
+- Data refresh setelah tambah/update/delete transaksi.
+- Bottom nav tidak shift.
+
+#### Tambah Transaksi
+
+- Bisa pilih `Pengeluaran`.
+- Bisa pilih `Pemasukan`.
+- Nominal format titik.
+- DatePicker tampil.
+- Display date memakai Hari ini/Kemarin/nama hari.
+- DB date tetap `d/M/yyyy`.
+- Category selector bekerja.
+- Catatan auto-scroll.
+- Simpan insert row baru.
+
+#### Riwayat
+
+- List tampil.
+- Search bekerja.
+- Filter chips bekerja.
+- Date grouping benar.
+- Header tidak clickable.
+- Row transaksi clickable.
+- Setelah update/delete, list refresh.
+- Empty state tampil saat tidak ada hasil.
+
+#### Update/Delete
+
+- Dibuka dari Riwayat dengan ID benar.
+- Data prefill benar.
+- Type terlihat tapi locked.
+- Nominal update tersimpan.
+- Category update tersimpan.
+- Date update memindahkan group Riwayat.
+- Catatan update tersimpan.
+- Hapus menampilkan dialog.
+- Batal dialog tidak delete.
+- Hapus dialog delete row.
+- Tidak membuat duplicate row.
+
+#### Pengeluaran
+
+- Total pengeluaran bulan terpilih benar.
+- Month selector bekerja.
+- Chart 6 bulan tampil.
+- Category breakdown tampil.
+- Data refresh setelah update/delete.
+- Selected month tidak reset sembarangan.
+
+#### Budget
+
+- Sisa Budget tampil.
+- Terpakai bulan ini benar.
+- Total budget dari `BudgetPrefs/budget`.
+- Progress bar capped secara visual.
+- Percentage badge bisa lebih dari 100%.
+- Status card safe/warning/over budget benar.
+- Edit budget show/hide.
+- Simpan budget menerima angka, titik, `Rp`, spasi.
+- Home budget card ikut update setelah kembali.
+
+#### Bottom nav
+
+- Home active benar.
+- Pengeluaran active benar.
+- Budget active benar.
+- Riwayat active benar.
+- Pengeluaran label tidak lebih kecil.
+- Icon/label tidak shift active/inactive.
+- FAB tengah membuka Tambah Transaksi.
+- Ripple FAB tidak kotak.
+
+#### Launcher
+
+- App name `Artos`.
+- Icon hijau `#306D29`.
+- Logo putih centered.
+- Tidak ada white square.
+- Logo tidak cropped.
+- Jika launcher cache membandel, uninstall app dulu lalu install ulang.
+
+#### Build
+
+Build command:
+
+```powershell
+.\gradlew.bat :app:assembleDebug --no-configuration-cache --console=plain --no-daemon
+```
+
+Jika sandbox menolak akses SDK `android.jar`, itu masalah environment/tooling, bukan otomatis error app. Jalankan dengan akses yang mengizinkan Android SDK.
+
 
 Sebelum edit:
 
@@ -3041,3 +4652,4 @@ Contoh:
 app:backgroundTint="@color/login_button"
 ```
 
+---
