@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Cek biar user nggak bisa login kalau namanya kosong
             if (inputNama.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Isi username dulu bro!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Masukan Password dan Username", Toast.LENGTH_SHORT).show();
                 return;
             }
 
