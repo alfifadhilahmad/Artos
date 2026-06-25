@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFDF7">
+    android:background="#FFFDF7"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -487,13 +489,17 @@
         android:elevation="16dp"
         android:focusable="true"
         android:foreground="@drawable/fab_center_oval_ripple"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:translationZ="16dp">
 
         <FrameLayout
             android:layout_width="66dp"
             android:layout_height="66dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_center_input_button">
+            android:background="@drawable/bg_center_input_button"
+            android:elevation="16dp"
+            android:translationZ="16dp">
 
             <ImageView
                 android:layout_width="32dp"
