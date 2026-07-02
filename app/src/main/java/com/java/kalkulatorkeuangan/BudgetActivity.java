@@ -209,7 +209,7 @@ public class BudgetActivity extends AppCompatActivity {
         });
     }
 
-    private Float parseBudgetInput(String input) {
+    private Float par/seBudgetInput(String input) {
         if (input == null) {
             return null;
         }
